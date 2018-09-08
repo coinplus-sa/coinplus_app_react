@@ -1,0 +1,30 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "airbnb",
+    "prettier",
+    "prettier/react",
+    "plugin:react-native/all",
+    "plugin:jest/recommended"
+  ],
+  "plugins": ["prettier", "react", "jsx-a11y", "react-native", "jest"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "react-native/react-native": true,
+    "jest/globals": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+    }
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }]
+  }
+}
