@@ -1,24 +1,12 @@
 import React, { Component } from "react";
 import { Image, View } from "react-native";
-import {
-  Container,
-  Header,
-  Left,
-  Body,
-  Content,
-  Right,
-  Button,
-  Text,
-  Picker,
-  H3
-} from "native-base";
+import { Container, Content, Button, Text, Picker, H3 } from "native-base";
 
 import { connect } from "react-redux";
 import {
   resetKeysAction,
   updateCurrencyAction
 } from "../redux/reducers/inputs";
-import logo from "../assets/logo.png";
 
 class SelectionScreen extends Component {
   componentDidUpdate() {
@@ -67,7 +55,7 @@ class SelectionScreen extends Component {
           >
             <Button
               transparent
-              onPress={() => navigation.navigate("CardInput")}
+              onPress={() => navigation.navigate("CardFrontInput")}
               style={{
                 flexDirection: "column",
                 alignItems: "center",
@@ -110,23 +98,6 @@ class SelectionScreen extends Component {
     );
   }
 }
-
-SelectionScreen.navigationOptions = () => ({
-  header: (
-    <Header>
-      <Left />
-      <Body
-        style={{
-          minHeight: 50,
-          justifyContent: "center"
-        }}
-      >
-        <Image source={logo} />
-      </Body>
-      <Right />
-    </Header>
-  )
-});
 
 export default connect(
   state => ({

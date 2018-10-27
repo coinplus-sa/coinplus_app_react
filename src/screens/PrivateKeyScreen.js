@@ -1,12 +1,13 @@
 import React, { Component } from "react";
-import { Image, View, InteractionManager } from "react-native";
+import {
+  View,
+  InteractionManager,
+  TouchableOpacity,
+  Clipboard
+} from "react-native";
 import {
   Container,
-  Header,
-  Left,
-  Body,
   Content,
-  Right,
   Button,
   Text,
   Icon,
@@ -14,21 +15,22 @@ import {
   Spinner
 } from "native-base";
 import { connect } from "react-redux";
-import computePrivateKeyBitcoin from "../util/bitcoin";
-import computePrivateKeyEthereum from "../util/ethereum";
-import logo from "../assets/logo.png";
+
+import Bitcoin from "../util/bitcoin";
+import Ethereum from "../util/ethereum";
 
 class PrivateKeyScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      privateKey: "",
+      computedPrivateKey: "",
       step: "unprocessed"
     };
 
     this.computePrivateKey = this.computePrivateKey.bind(this);
     this.requestComputePrivateKey = this.requestComputePrivateKey.bind(this);
+    this.copyToClipboard = this.copyToClipboard.bind(this);
     this.timer = null;
   }
 
@@ -49,47 +51,89 @@ class PrivateKeyScreen extends Component {
     );
   }
 
+  copyToClipboard() {
+    const { computedPrivateKey } = this.state;
+    Clipboard.setString(computedPrivateKey);
+  }
+
   computePrivateKey() {
     const { step } = this.state;
     if (step === "processed") return;
 
     InteractionManager.runAfterInteractions(async () => {
-      const { key1, key2, currency } = this.props;
+      const {
+        providedKey1,
+        providedKey2,
+        providedPublicKey,
+        currency
+      } = this.props;
 
       if (currency === "btc") {
-        const privateKey = await computePrivateKeyBitcoin(key1, key2);
-        this.setState({ privateKey, step: "processed" });
+        const wif = await Bitcoin.getWIF(providedKey1, providedKey2);
+        const computedPublicKey = Bitcoin.getPublicKeyFromWif(wif);
+
+        if (providedPublicKey !== computedPublicKey) {
+          this.setState({ step: "mismatch" });
+        } else {
+          this.setState({
+            computedPrivateKey: wif,
+            step: "processed"
+          });
+        }
       } else {
-        const privateKey = await computePrivateKeyEthereum(key1, key2);
-        this.setState({ privateKey, step: "processed" });
+        const computedPrivateKey = await Ethereum.getPrivateKey(
+          providedKey1,
+          providedKey2
+        );
+        const addressKey = Ethereum.getAddressKey(computedPrivateKey);
+
+        if (providedPublicKey.toLowerCase() !== addressKey) {
+          this.setState({ step: "mismatch" });
+        } else {
+          this.setState({
+            computedPrivateKey,
+            step: "processed"
+          });
+        }
       }
     });
   }
 
   render() {
-    const { currency } = this.props;
-    const { privateKey, step } = this.state;
+    const { providedPublicKey, navigation } = this.props;
+    const { computedPrivateKey, step } = this.state;
 
     return (
       <Container>
-        <Content padder contentContainerStyle={{ flexGrow: 1 }}>
-          <H3 style={{ textAlign: "center", color: "#1565c0", marginTop: 32 }}>
-            WARNING
-          </H3>
-          <Text style={{ textAlign: "center", marginTop: 16 }}>
-            Your private key is your password.
-            {"\n"}
-            Keep it strictly confidential.
-          </Text>
-          <View
-            style={{
-              flexGrow: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingBottom: 40
-            }}
-          >
-            {step === "unprocessed" && (
+        {step === "mismatch" ? (
+          <Content contentContainerStyle={{ flexGrow: 1 }}>
+            <H3
+              style={{ textAlign: "center", color: "#1565c0", marginTop: 32 }}
+            >
+              ERROR
+            </H3>
+            <Text style={{ textAlign: "center", marginTop: 16 }}>
+              The provided secret keys 1 and 2 do not match with your public
+              address
+            </Text>
+            <Text
+              style={{
+                textAlign: "center",
+                marginTop: 16,
+                fontWeight: "bold",
+                color: "#1565c0"
+              }}
+            >
+              {providedPublicKey}
+            </Text>
+            <View
+              style={{
+                flexGrow: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                paddingBottom: 40
+              }}
+            >
               <View>
                 <Button
                   style={{
@@ -99,10 +143,9 @@ class PrivateKeyScreen extends Component {
                     height: 80,
                     width: 80
                   }}
-                  onLongPress={this.requestComputePrivateKey}
-                  delayLongPress={1000}
+                  onPress={() => navigation.goBack()}
                 >
-                  <Icon name="lock" style={{ fontSize: 48 }} />
+                  <Icon name="arrow-back" style={{ fontSize: 48 }} />
                 </Button>
                 <H3
                   style={{
@@ -111,79 +154,135 @@ class PrivateKeyScreen extends Component {
                     marginTop: 16
                   }}
                 >
-                  PRESS & HOLD
+                  TRY AGAIN
                 </H3>
-                <Text style={{ textAlign: "center", marginTop: 8 }}>
-                  To display your private key
-                </Text>
               </View>
-            )}
-            {step === "processing" && (
-              <View>
-                <Spinner color="#d81e5b" />
-                <Text
-                  style={{
-                    textAlign: "center",
-                    marginTop: 16
-                  }}
-                >
-                  Processing...
-                  {"\n"}
-                  This might take a while.
-                </Text>
-              </View>
-            )}
-            {step === "processed" && (
-              <View>
-                <Text
-                  style={{
-                    textAlign: "center"
-                  }}
-                >
-                  Processed {currency} private key is
-                </Text>
-                <Text
-                  style={{
-                    textAlign: "center",
-                    marginTop: 16,
-                    fontWeight: "bold",
-                    color: "#d81e5b"
-                  }}
-                >
-                  {privateKey}
-                </Text>
-              </View>
-            )}
-          </View>
-        </Content>
+            </View>
+          </Content>
+        ) : (
+          <Content contentContainerStyle={{ flexGrow: 1 }}>
+            <H3
+              style={{ textAlign: "center", color: "#1565c0", marginTop: 32 }}
+            >
+              WARNING
+            </H3>
+            <Text style={{ textAlign: "center", marginTop: 16 }}>
+              Your private key is your password.
+              {"\n"}
+              Keep it strictly confidential.
+            </Text>
+            <View
+              style={{
+                flexGrow: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                paddingBottom: 40
+              }}
+            >
+              {step === "unprocessed" && (
+                <View>
+                  <Button
+                    style={{
+                      alignSelf: "center",
+                      justifyContent: "center",
+                      borderRadius: 40,
+                      height: 80,
+                      width: 80
+                    }}
+                    onLongPress={this.requestComputePrivateKey}
+                    delayLongPress={1000}
+                  >
+                    <Icon name="lock" style={{ fontSize: 48 }} />
+                  </Button>
+                  <H3
+                    style={{
+                      textAlign: "center",
+                      color: "#d81e5b",
+                      marginTop: 16
+                    }}
+                  >
+                    PRESS & HOLD
+                  </H3>
+                  <Text style={{ textAlign: "center", marginTop: 8 }}>
+                    To display your private key
+                  </Text>
+                </View>
+              )}
+              {step === "processing" && (
+                <View>
+                  <Spinner color="#d81e5b" />
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      marginTop: 16
+                    }}
+                  >
+                    Processing...
+                    {"\n"}
+                    This might take a while.
+                  </Text>
+                </View>
+              )}
+              {step === "processed" && (
+                <View>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      fontWeight: "bold",
+                      color: "#1565c0"
+                    }}
+                  >
+                    {providedPublicKey}
+                  </Text>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      marginTop: 16
+                    }}
+                  >
+                    processed private key is
+                  </Text>
+                  <TouchableOpacity
+                    onPress={this.copyToClipboard}
+                    style={{
+                      backgroundColor: "#fff",
+                      marginTop: 8,
+                      padding: 16
+                    }}
+                  >
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        color: "#d81e5b"
+                      }}
+                    >
+                      {computedPrivateKey}
+                    </Text>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        marginTop: 16,
+                        fontWeight: "bold",
+                        color: "#d81e5b"
+                      }}
+                    >
+                      COPY TO CLIPBOARD
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          </Content>
+        )}
       </Container>
     );
   }
 }
 
-PrivateKeyScreen.navigationOptions = ({ navigation }) => ({
-  header: (
-    <Header>
-      <Left>
-        <Button transparent onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" />
-        </Button>
-      </Left>
-      <Body
-        style={{
-          minHeight: 50,
-          justifyContent: "center"
-        }}
-      >
-        <Image source={logo} />
-      </Body>
-      <Right />
-    </Header>
-  )
-});
-
 export default connect(state => ({
-  key1: state.inputs.key1,
-  key2: state.inputs.key2,
+  providedKey1: state.inputs.key1,
+  providedKey2: state.inputs.key2,
+  providedPublicKey: state.inputs.publicKey,
   currency: state.inputs.currency
 }))(PrivateKeyScreen);

@@ -3,6 +3,8 @@ package com.compute_key_rn2;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import community.revteltech.nfc.NfcManagerPackage;
+import com.bitgo.randombytes.RandomBytesPackage;
 import com.crypho.scrypt.RNScryptPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -24,6 +26,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new NfcManagerPackage(),
+            new RandomBytesPackage(),
             new RNScryptPackage()
       );
     }

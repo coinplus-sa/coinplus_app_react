@@ -1,31 +1,30 @@
 import React, { Component, Fragment } from "react";
-import { Image, Keyboard, Dimensions, View } from "react-native";
+import { Image, Keyboard, Dimensions, View, Platform } from "react-native";
 
 import {
   Container,
-  Header,
   Content,
   Footer,
   FooterTab,
-  Left,
-  Body,
-  Right,
   Input,
   Button,
   Text,
-  Icon,
   Item
 } from "native-base";
 import { connect } from "react-redux";
 import {
   resetKeysAction,
+  resetPublicKeyAction,
   updateKey1Action,
-  updateKey2Action
+  updateKey2Action,
+  updatePublicKeyAction
 } from "../redux/reducers/inputs";
 
-import logo from "../assets/logo.png";
+const monospaceFont = Platform.OS === "android" ? "monospace" : "Menlo";
 
-const ratio = 1120 / 1782;
+const originalWidth = 1120;
+const originalHeight = 1782;
+const ratio = originalWidth / originalHeight;
 
 const adjust = 7;
 
@@ -43,16 +42,23 @@ const input2 = {
   height: 1690 - 1513
 };
 
+const publicKeyInput = {
+  x: 105 - adjust,
+  y: 1211,
+  width: 1015 - 105,
+  height: 1325 - 1211
+};
+
 class BarInputScreen extends Component {
   state = {
     bar: {},
-    layoutComputed: false,
-    input1Height: 0
+    layoutComputed: false
   };
 
   constructor(props) {
     super(props);
     props.resetKeys();
+    props.resetPublicKey();
   }
 
   handleBar = event => {
@@ -63,11 +69,20 @@ class BarInputScreen extends Component {
   };
 
   render() {
-    const { navigation, key1, key2, updateKey1, updateKey2 } = this.props;
-    const { bar, layoutComputed, input1Height } = this.state;
+    const {
+      navigation,
+      key1,
+      key2,
+      publicKey,
+      updateKey1,
+      updateKey2,
+      updatePublicKey
+    } = this.props;
+    const { bar, layoutComputed } = this.state;
 
     const key1Length = 28;
     const key2Length = 14;
+
     const key1Valid = !!(key1 && key1.length === key1Length);
     const key2Valid = !!(key2 && key2.length === key2Length);
 
@@ -90,11 +105,11 @@ class BarInputScreen extends Component {
       imageHeight = imageWidth / ratio;
     }
 
-    const scale = imageWidth / 1120;
+    const scale = imageWidth / originalWidth;
 
     return (
       <Container>
-        <Content padder contentContainerStyle={{ flexGrow: 1 }}>
+        <Content contentContainerStyle={{ flexGrow: 1 }}>
           <View
             style={{
               alignSelf: "center",
@@ -128,20 +143,20 @@ class BarInputScreen extends Component {
                   }}
                 >
                   <Input
-                    placeholder="secret1"
+                    placeholder="Secret 1"
                     onChangeText={updateKey1}
                     maxLength={key1Length}
+                    autoCapitalize="none"
                     autoCorrect={false}
                     value={key1}
                     multiline
-                    onContentSizeChange={event => {
-                      this.setState({
-                        input1Height: event.nativeEvent.contentSize.height
-                      });
-                    }}
                     style={{
-                      fontSize: 16,
-                      height: Math.max(35, input1Height)
+                      fontFamily: monospaceFont,
+                      fontSize: 14,
+                      lineHeight: 18,
+                      height: 36,
+                      paddingVertical: 0,
+                      textAlignVertical: "top"
                     }}
                   />
                 </Item>
@@ -158,12 +173,43 @@ class BarInputScreen extends Component {
                   }}
                 >
                   <Input
-                    placeholder="secret2"
+                    placeholder="Secret 2"
                     onChangeText={updateKey2}
                     maxLength={key2Length}
+                    autoCapitalize="none"
                     autoCorrect={false}
                     value={key2}
-                    style={{ fontSize: 16 }}
+                    style={{
+                      fontFamily: monospaceFont,
+                      fontSize: 14,
+                      paddingVertical: 0,
+                      textAlignVertical: "center"
+                    }}
+                  />
+                </Item>
+                <Item
+                  regular
+                  style={{
+                    position: "absolute",
+                    backgroundColor: "#fff",
+                    top: bar.y + publicKeyInput.y * scale,
+                    left: publicKeyInput.x * scale,
+                    width: publicKeyInput.width * scale,
+                    height: publicKeyInput.height * scale
+                  }}
+                >
+                  <Input
+                    placeholder="Public key"
+                    onChangeText={updatePublicKey}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    value={publicKey}
+                    style={{
+                      fontFamily: monospaceFont,
+                      fontSize: 14,
+                      paddingVertical: 0,
+                      textAlignVertical: "center"
+                    }}
                   />
                 </Item>
               </Fragment>
@@ -194,41 +240,27 @@ class BarInputScreen extends Component {
   }
 }
 
-BarInputScreen.navigationOptions = ({ navigation }) => ({
-  header: (
-    <Header>
-      <Left>
-        <Button transparent onPress={() => navigation.navigate("Selection")}>
-          <Icon name="arrow-back" />
-        </Button>
-      </Left>
-      <Body
-        style={{
-          minHeight: 50,
-          justifyContent: "center"
-        }}
-      >
-        <Image source={logo} />
-      </Body>
-      <Right />
-    </Header>
-  )
-});
-
 export default connect(
   state => ({
     key1: state.inputs.key1,
-    key2: state.inputs.key2
+    key2: state.inputs.key2,
+    publicKey: state.inputs.publicKey
   }),
   dispatch => ({
     resetKeys: () => {
       dispatch(resetKeysAction());
+    },
+    resetPublicKey: () => {
+      dispatch(resetPublicKeyAction());
     },
     updateKey1: key => {
       dispatch(updateKey1Action(key));
     },
     updateKey2: key => {
       dispatch(updateKey2Action(key));
+    },
+    updatePublicKey: key => {
+      dispatch(updatePublicKeyAction(key));
     }
   })
 )(BarInputScreen);
