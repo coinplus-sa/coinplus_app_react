@@ -18,6 +18,7 @@ import {
   resetPublicKeyAction,
   updatePublicKeyAction
 } from "../redux/reducers/inputs";
+import parseNfc from "../util/nfcParser";
 
 const monospaceFont = Platform.OS === "android" ? "monospace" : "Menlo";
 
@@ -73,7 +74,8 @@ class CardFrontInputScreen extends Component {
     try {
       if (Ndef.isType(tag.ndefMessage[0], Ndef.TNF_WELL_KNOWN, Ndef.RTD_TEXT)) {
         const text = Ndef.text.decodePayload(tag.ndefMessage[0].payload);
-        updatePublicKey(text);
+        const publicKey = parseNfc(text);
+        updatePublicKey(publicKey);
       }
     } catch (e) {
       // console.log(e);
