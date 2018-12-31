@@ -9,7 +9,7 @@ const initialState = {
   key1: "",
   key2: "",
   publicKey: "",
-  currency: "btc"
+  currency: "btc",
 };
 
 /*
@@ -40,39 +40,39 @@ export default function reducer(state = initialState, action) {
 export function updateKey1Action(key1) {
   return {
     type: UPDATE_KEY_1,
-    key1
+    key1,
   };
 }
 
 export function updateKey2Action(key2) {
   return {
     type: UPDATE_KEY_2,
-    key2
+    key2,
   };
 }
 
 export function updatePublicKeyAction(publicKey) {
   return {
     type: UPDATE_PUBLIC_KEY,
-    publicKey
+    publicKey,
   };
 }
 
 export function resetKeysAction() {
   return {
-    type: RESET_KEYS
+    type: RESET_KEYS,
   };
 }
 
 export function resetPublicKeyAction() {
   return {
-    type: RESET_PUBLIC_KEY
+    type: RESET_PUBLIC_KEY,
   };
 }
 
 export function updateCurrencyAction(currency) {
   return {
     type: UPDATE_CURRENCY,
-    currency
+    currency,
   };
 }

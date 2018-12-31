@@ -1,5 +1,12 @@
 import React, { Component, Fragment } from "react";
-import { Image, Keyboard, Dimensions, View, Platform } from "react-native";
+import {
+  Image,
+  Keyboard,
+  Dimensions,
+  View,
+  Platform,
+  StyleSheet,
+} from "react-native";
 
 import {
   Container,
@@ -9,7 +16,7 @@ import {
   Input,
   Button,
   Text,
-  Item
+  Item,
 } from "native-base";
 import { connect } from "react-redux";
 import {
@@ -17,7 +24,7 @@ import {
   resetPublicKeyAction,
   updateKey1Action,
   updateKey2Action,
-  updatePublicKeyAction
+  updatePublicKeyAction,
 } from "../redux/reducers/inputs";
 
 const monospaceFont = Platform.OS === "android" ? "monospace" : "Menlo";
@@ -32,27 +39,61 @@ const input1 = {
   x: 194 - adjust,
   y: 407,
   width: 926 - 194,
-  height: 731 - 407
+  height: 731 - 407,
 };
 
 const input2 = {
   x: 194 - adjust,
   y: 1513,
   width: 926 - 194,
-  height: 1690 - 1513
+  height: 1690 - 1513,
 };
 
 const publicKeyInput = {
   x: 105 - adjust,
   y: 1211,
   width: 1015 - 105,
-  height: 1325 - 1211
+  height: 1325 - 1211,
 };
+
+const styles = StyleSheet.create({
+  view: {
+    alignSelf: "center",
+    justifyContent: "center",
+    flexGrow: 1,
+    position: "relative",
+  },
+  image: {
+    maxWidth: "100%",
+    maxHeight: "100%",
+  },
+  item: {
+    position: "absolute",
+    backgroundColor: "#fff",
+  },
+  textInput: {
+    fontFamily: monospaceFont,
+    fontSize: 14,
+    paddingVertical: 0,
+    textAlignVertical: "center",
+  },
+  textInputSecret1: {
+    lineHeight: 18,
+    height: 36,
+    textAlignVertical: "top",
+  },
+  transparentBackground: {
+    backgroundColor: "transparent",
+  },
+  colorWhite: {
+    color: "#fff",
+  },
+});
 
 class BarInputScreen extends Component {
   state = {
     bar: {},
-    layoutComputed: false
+    layoutComputed: false,
   };
 
   constructor(props) {
@@ -64,7 +105,7 @@ class BarInputScreen extends Component {
   handleBar = event => {
     this.setState({
       bar: event.nativeEvent.layout,
-      layoutComputed: true
+      layoutComputed: true,
     });
   };
 
@@ -76,7 +117,7 @@ class BarInputScreen extends Component {
       publicKey,
       updateKey1,
       updateKey2,
-      updatePublicKey
+      updatePublicKey,
     } = this.props;
     const { bar, layoutComputed } = this.state;
 
@@ -110,22 +151,10 @@ class BarInputScreen extends Component {
     return (
       <Container>
         <Content contentContainerStyle={{ flexGrow: 1 }}>
-          <View
-            style={{
-              alignSelf: "center",
-              justifyContent: "center",
-              flexGrow: 1,
-              position: "relative"
-            }}
-          >
+          <View style={styles.view}>
             <Image
               source={require("../assets/bar-input.png")}
-              style={{
-                width: imageWidth,
-                height: imageHeight,
-                maxWidth: "100%",
-                maxHeight: "100%"
-              }}
+              style={[styles.image, { width: imageWidth, height: imageHeight }]}
               onLayout={this.handleBar}
             />
             {layoutComputed && (
@@ -133,14 +162,15 @@ class BarInputScreen extends Component {
                 <Item
                   regular
                   success={key1Valid}
-                  style={{
-                    position: "absolute",
-                    backgroundColor: "#fff",
-                    top: bar.y + input1.y * scale,
-                    left: input1.x * scale,
-                    width: input1.width * scale,
-                    height: input1.height * scale
-                  }}
+                  style={[
+                    styles.item,
+                    {
+                      top: bar.y + input1.y * scale,
+                      left: input1.x * scale,
+                      width: input1.width * scale,
+                      height: input1.height * scale,
+                    },
+                  ]}
                 >
                   <Input
                     placeholder="Secret 1"
@@ -150,27 +180,21 @@ class BarInputScreen extends Component {
                     autoCorrect={false}
                     value={key1}
                     multiline
-                    style={{
-                      fontFamily: monospaceFont,
-                      fontSize: 14,
-                      lineHeight: 18,
-                      height: 36,
-                      paddingVertical: 0,
-                      textAlignVertical: "top"
-                    }}
+                    style={[styles.textInput, styles.textInputSecret1]}
                   />
                 </Item>
                 <Item
                   regular
                   success={key2Valid}
-                  style={{
-                    position: "absolute",
-                    backgroundColor: "#fff",
-                    top: bar.y + input2.y * scale,
-                    left: input2.x * scale,
-                    width: input2.width * scale,
-                    height: input2.height * scale
-                  }}
+                  style={[
+                    styles.item,
+                    {
+                      top: bar.y + input2.y * scale,
+                      left: input2.x * scale,
+                      width: input2.width * scale,
+                      height: input2.height * scale,
+                    },
+                  ]}
                 >
                   <Input
                     placeholder="Secret 2"
@@ -179,24 +203,20 @@ class BarInputScreen extends Component {
                     autoCapitalize="none"
                     autoCorrect={false}
                     value={key2}
-                    style={{
-                      fontFamily: monospaceFont,
-                      fontSize: 14,
-                      paddingVertical: 0,
-                      textAlignVertical: "center"
-                    }}
+                    style={styles.textInput}
                   />
                 </Item>
                 <Item
                   regular
-                  style={{
-                    position: "absolute",
-                    backgroundColor: "#fff",
-                    top: bar.y + publicKeyInput.y * scale,
-                    left: publicKeyInput.x * scale,
-                    width: publicKeyInput.width * scale,
-                    height: publicKeyInput.height * scale
-                  }}
+                  style={[
+                    styles.item,
+                    {
+                      top: bar.y + publicKeyInput.y * scale,
+                      left: publicKeyInput.x * scale,
+                      width: publicKeyInput.width * scale,
+                      height: publicKeyInput.height * scale,
+                    },
+                  ]}
                 >
                   <Input
                     placeholder="Public key"
@@ -204,23 +224,14 @@ class BarInputScreen extends Component {
                     autoCapitalize="none"
                     autoCorrect={false}
                     value={publicKey}
-                    style={{
-                      fontFamily: monospaceFont,
-                      fontSize: 14,
-                      paddingVertical: 0,
-                      textAlignVertical: "center"
-                    }}
+                    style={styles.textInput}
                   />
                 </Item>
               </Fragment>
             )}
           </View>
         </Content>
-        <Footer
-          style={{
-            backgroundColor: "transparent"
-          }}
-        >
+        <Footer style={styles.transparentBackground}>
           <FooterTab>
             <Button
               primary
@@ -231,7 +242,7 @@ class BarInputScreen extends Component {
                 navigation.navigate("PrivateKey");
               }}
             >
-              <Text style={{ color: "#fff" }}>Process</Text>
+              <Text style={styles.colorWhite}>Process</Text>
             </Button>
           </FooterTab>
         </Footer>
@@ -244,7 +255,7 @@ export default connect(
   state => ({
     key1: state.inputs.key1,
     key2: state.inputs.key2,
-    publicKey: state.inputs.publicKey
+    publicKey: state.inputs.publicKey,
   }),
   dispatch => ({
     resetKeys: () => {
@@ -261,6 +272,6 @@ export default connect(
     },
     updatePublicKey: key => {
       dispatch(updatePublicKeyAction(key));
-    }
+    },
   })
 )(BarInputScreen);
