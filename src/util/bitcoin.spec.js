@@ -14,14 +14,14 @@ jest.mock("react-native-scrypt", () => ({
           r,
           p,
           dkLen,
-          encoding: "hex"
+          encoding: "hex",
         },
         derivedKey => {
           resolve(derivedKey);
         }
       )
     );
-  }
+  },
 }));
 
 const generateTest = (key1, key2, expectedWif, expectedPublicKey) => {

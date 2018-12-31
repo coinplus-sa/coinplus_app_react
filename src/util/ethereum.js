@@ -18,5 +18,5 @@ const getAddressKey = privateKey => {
 
 export default {
   getPrivateKey,
-  getAddressKey
+  getAddressKey,
 };

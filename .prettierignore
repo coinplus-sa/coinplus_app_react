@@ -1,7 +1,6 @@
 .idea
 android
-gen
 ios
 node_modules
-shim.js
-native-base-theme
+package.json
+package-lock.json

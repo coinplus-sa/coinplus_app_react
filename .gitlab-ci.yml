@@ -1,0 +1,31 @@
+image: node:dubnium
+
+stages:
+  - init
+  - test
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm
+    - node_modules/
+
+init:
+  stage: init
+  script:
+    - npm config set cache $CI_PROJECT_DIR/.npm
+    - npm ci
+
+audit:
+  stage: test
+  script: npm audit
+
+lint:
+  stage: test
+  script: npm run lint
+
+jest:
+  stage: test
+  script:
+    - npm run clean
+    - npm run jest

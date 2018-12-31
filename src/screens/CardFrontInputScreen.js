@@ -1,6 +1,12 @@
 import React, { Component } from "react";
-import { Image, Keyboard, Dimensions, View, Platform } from "react-native";
-
+import {
+  Image,
+  Keyboard,
+  Dimensions,
+  View,
+  Platform,
+  StyleSheet,
+} from "react-native";
 import {
   Container,
   Content,
@@ -9,16 +15,17 @@ import {
   Input,
   Button,
   Text,
-  Item
+  Item,
+  Icon,
 } from "native-base";
 import { connect } from "react-redux";
 import NfcManager, { Ndef } from "react-native-nfc-manager";
 
 import {
   resetPublicKeyAction,
-  updatePublicKeyAction
+  updatePublicKeyAction,
 } from "../redux/reducers/inputs";
-import parseNfc from "../util/nfcParser";
+import parseScannedCode from "../util/scannedCodeParser";
 
 const monospaceFont = Platform.OS === "android" ? "monospace" : "Menlo";
 
@@ -32,13 +39,44 @@ const input1 = {
   x: 3 - adjust,
   y: 262,
   width: 677 - 3,
-  height: 330 - 262
+  height: 330 - 262,
 };
+
+const styles = StyleSheet.create({
+  view: {
+    alignSelf: "center",
+    justifyContent: "center",
+    flexGrow: 1,
+    position: "relative",
+  },
+  image: {
+    maxWidth: "100%",
+    maxHeight: "100%",
+  },
+  item: {
+    position: "absolute",
+    backgroundColor: "#fff",
+  },
+  textInput: {
+    fontFamily: monospaceFont,
+    fontSize: 14,
+    paddingVertical: 0,
+    paddingLeft: 20,
+    paddingRight: 20,
+    textAlignVertical: "center",
+  },
+  transparentBackground: {
+    backgroundColor: "transparent",
+  },
+  colorWhite: {
+    color: "#fff",
+  },
+});
 
 class CardFrontInputScreen extends Component {
   state = {
     bar: {},
-    layoutComputed: false
+    layoutComputed: false,
   };
 
   constructor(props) {
@@ -64,7 +102,7 @@ class CardFrontInputScreen extends Component {
   handleBar = event => {
     this.setState({
       bar: event.nativeEvent.layout,
-      layoutComputed: true
+      layoutComputed: true,
     });
   };
 
@@ -74,7 +112,7 @@ class CardFrontInputScreen extends Component {
     try {
       if (Ndef.isType(tag.ndefMessage[0], Ndef.TNF_WELL_KNOWN, Ndef.RTD_TEXT)) {
         const text = Ndef.text.decodePayload(tag.ndefMessage[0].payload);
-        const publicKey = parseNfc(text);
+        const publicKey = parseScannedCode(text);
         updatePublicKey(publicKey);
       }
     } catch (e) {
@@ -156,35 +194,30 @@ class CardFrontInputScreen extends Component {
     return (
       <Container>
         <Content contentContainerStyle={{ flexGrow: 1 }}>
-          <View
-            style={{
-              alignSelf: "center",
-              justifyContent: "center",
-              flexGrow: 1,
-              position: "relative"
-            }}
-          >
+          <View style={styles.view}>
             <Image
               source={require("../assets/card-front.png")}
-              style={{
-                width: imageWidth,
-                height: imageHeight,
-                maxWidth: "100%",
-                maxHeight: "100%"
-              }}
+              style={[
+                styles.image,
+                {
+                  width: imageWidth,
+                  height: imageHeight,
+                },
+              ]}
               onLayout={this.handleBar}
             />
             {layoutComputed && (
               <Item
                 regular
-                style={{
-                  position: "absolute",
-                  backgroundColor: "#fff",
-                  top: bar.y + input1.y * scale,
-                  left: input1.x * scale,
-                  width: input1.width * scale,
-                  height: input1.height * scale
-                }}
+                style={[
+                  styles.item,
+                  {
+                    top: bar.y + input1.y * scale,
+                    left: input1.x * scale,
+                    width: input1.width * scale,
+                    height: input1.height * scale,
+                  },
+                ]}
               >
                 <Input
                   placeholder="Public key"
@@ -192,24 +225,21 @@ class CardFrontInputScreen extends Component {
                   autoCapitalize="none"
                   autoCorrect={false}
                   value={publicKey}
-                  style={{
-                    fontFamily: monospaceFont,
-                    fontSize: 14,
-                    paddingVertical: 0,
-                    paddingLeft: 20,
-                    paddingRight: 20,
-                    textAlignVertical: "center"
+                  style={styles.textInput}
+                />
+                <Icon
+                  active
+                  name="md-qr-scanner"
+                  onPress={() => {
+                    Keyboard.dismiss();
+                    navigation.navigate("QRScan");
                   }}
                 />
               </Item>
             )}
           </View>
         </Content>
-        <Footer
-          style={{
-            backgroundColor: "transparent"
-          }}
-        >
+        <Footer style={styles.transparentBackground}>
           <FooterTab>
             <Button
               primary
@@ -219,7 +249,7 @@ class CardFrontInputScreen extends Component {
                 navigation.navigate("CardBackInput");
               }}
             >
-              <Text style={{ color: "#fff" }}>Next</Text>
+              <Text style={styles.colorWhite}>Next</Text>
             </Button>
           </FooterTab>
         </Footer>
@@ -230,7 +260,7 @@ class CardFrontInputScreen extends Component {
 
 export default connect(
   state => ({
-    publicKey: state.inputs.publicKey
+    publicKey: state.inputs.publicKey,
   }),
   dispatch => ({
     resetPublicKey: () => {
@@ -238,6 +268,6 @@ export default connect(
     },
     updatePublicKey: key => {
       dispatch(updatePublicKeyAction(key));
-    }
+    },
   })
 )(CardFrontInputScreen);

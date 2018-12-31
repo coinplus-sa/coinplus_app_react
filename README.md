@@ -9,7 +9,7 @@ Please follow the "Getting started" guide from React Native ("Building Projects 
 Clone the repo and type:
 
 ```sh
-yarn install
+npm install
 react-native link
 ```
 
@@ -18,20 +18,6 @@ react-native link
 #### iOS
 
 Follow the steps: https://github.com/Crypho/react-native-scrypt#manual-installation
-
-#### Android
-
-Update `node_modules/react-native-scrypt/android/build.gradle`
-
-```
-android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.3"
-
-    defaultConfig {
-        ...
-        targetSdkVersion 26
-```
 
 ## Run
 
@@ -52,13 +38,19 @@ react-native run-android
 ### Lint
 
 ```sh
-yarn lint
+npm lint
 ```
 
-### Test
+### Jest
 
 ```sh
-yarn test
+npm jest
+```
+
+### Test (Lint + Jest)
+
+```sh
+npm test
 ```
 
 ## Common issues

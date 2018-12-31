@@ -3,7 +3,8 @@ import {
   View,
   InteractionManager,
   TouchableOpacity,
-  Clipboard
+  Clipboard,
+  StyleSheet,
 } from "react-native";
 import {
   Container,
@@ -12,12 +13,63 @@ import {
   Text,
   Icon,
   H3,
-  Spinner
+  Spinner,
 } from "native-base";
 import { connect } from "react-redux";
 
 import Bitcoin from "../util/bitcoin";
 import Ethereum from "../util/ethereum";
+
+const styles = StyleSheet.create({
+  publicKey: {
+    textAlign: "center",
+    marginTop: 16,
+    fontWeight: "bold",
+    color: "#1565c0",
+  },
+  mainView: {
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingBottom: 40,
+  },
+  button: {
+    alignSelf: "center",
+    justifyContent: "center",
+    borderRadius: 40,
+    height: 80,
+    width: 80,
+  },
+  touchable: {
+    backgroundColor: "#fff",
+    marginTop: 8,
+    padding: 16,
+  },
+  colorPrimary: {
+    color: "#1565c0",
+  },
+  colorSecondary: {
+    color: "#d81e5b",
+  },
+  iconSize: {
+    fontSize: 48,
+  },
+  centerText: {
+    textAlign: "center",
+  },
+  bold: {
+    fontWeight: "bold",
+  },
+  mt8: {
+    marginTop: 8,
+  },
+  mt16: {
+    marginTop: 16,
+  },
+  mt32: {
+    marginTop: 32,
+  },
+});
 
 class PrivateKeyScreen extends Component {
   constructor(props) {
@@ -25,7 +77,7 @@ class PrivateKeyScreen extends Component {
 
     this.state = {
       computedPrivateKey: "",
-      step: "unprocessed"
+      step: "unprocessed",
     };
 
     this.computePrivateKey = this.computePrivateKey.bind(this);
@@ -43,7 +95,7 @@ class PrivateKeyScreen extends Component {
   requestComputePrivateKey() {
     this.setState(
       {
-        step: "processing"
+        step: "processing",
       },
       () => {
         this.timer = setTimeout(this.computePrivateKey, 100);
@@ -65,7 +117,7 @@ class PrivateKeyScreen extends Component {
         providedKey1,
         providedKey2,
         providedPublicKey,
-        currency
+        currency,
       } = this.props;
 
       if (currency === "btc") {
@@ -77,7 +129,7 @@ class PrivateKeyScreen extends Component {
         } else {
           this.setState({
             computedPrivateKey: wif,
-            step: "processed"
+            step: "processed",
           });
         }
       } else {
@@ -92,7 +144,7 @@ class PrivateKeyScreen extends Component {
         } else {
           this.setState({
             computedPrivateKey,
-            step: "processed"
+            step: "processed",
           });
         }
       }
@@ -106,53 +158,29 @@ class PrivateKeyScreen extends Component {
     return (
       <Container>
         {step === "mismatch" ? (
-          <Content contentContainerStyle={{ flexGrow: 1 }}>
-            <H3
-              style={{ textAlign: "center", color: "#1565c0", marginTop: 32 }}
-            >
+          <Content padder contentContainerStyle={{ flexGrow: 1 }}>
+            <H3 style={[styles.centerText, styles.colorPrimary, styles.mt32]}>
               ERROR
             </H3>
-            <Text style={{ textAlign: "center", marginTop: 16 }}>
+            <Text style={[styles.centerText, styles.mt16]}>
               The provided secret keys 1 and 2 do not match with your public
               address
             </Text>
-            <Text
-              style={{
-                textAlign: "center",
-                marginTop: 16,
-                fontWeight: "bold",
-                color: "#1565c0"
-              }}
-            >
-              {providedPublicKey}
-            </Text>
-            <View
-              style={{
-                flexGrow: 1,
-                alignItems: "center",
-                justifyContent: "center",
-                paddingBottom: 40
-              }}
-            >
+            <Text style={styles.publicKey}>{providedPublicKey}</Text>
+            <View style={styles.mainView}>
               <View>
                 <Button
-                  style={{
-                    alignSelf: "center",
-                    justifyContent: "center",
-                    borderRadius: 40,
-                    height: 80,
-                    width: 80
-                  }}
+                  style={styles.button}
                   onPress={() => navigation.goBack()}
                 >
-                  <Icon name="arrow-back" style={{ fontSize: 48 }} />
+                  <Icon name="arrow-back" style={styles.iconSize} />
                 </Button>
                 <H3
-                  style={{
-                    textAlign: "center",
-                    color: "#d81e5b",
-                    marginTop: 16
-                  }}
+                  style={[
+                    styles.centerText,
+                    styles.colorSecondary,
+                    styles.mt16,
+                  ]}
                 >
                   TRY AGAIN
                 </H3>
@@ -160,50 +188,35 @@ class PrivateKeyScreen extends Component {
             </View>
           </Content>
         ) : (
-          <Content contentContainerStyle={{ flexGrow: 1 }}>
-            <H3
-              style={{ textAlign: "center", color: "#1565c0", marginTop: 32 }}
-            >
+          <Content padder contentContainerStyle={{ flexGrow: 1 }}>
+            <H3 style={[styles.centerText, styles.colorPrimary, styles.mt32]}>
               WARNING
             </H3>
-            <Text style={{ textAlign: "center", marginTop: 16 }}>
+            <Text style={[styles.centerText, styles.mt16]}>
               Your private key is your password.
               {"\n"}
               Keep it strictly confidential.
             </Text>
-            <View
-              style={{
-                flexGrow: 1,
-                alignItems: "center",
-                justifyContent: "center",
-                paddingBottom: 40
-              }}
-            >
+            <View style={styles.mainView}>
               {step === "unprocessed" && (
                 <View>
                   <Button
-                    style={{
-                      alignSelf: "center",
-                      justifyContent: "center",
-                      borderRadius: 40,
-                      height: 80,
-                      width: 80
-                    }}
+                    style={styles.button}
                     onLongPress={this.requestComputePrivateKey}
                     delayLongPress={1000}
                   >
-                    <Icon name="lock" style={{ fontSize: 48 }} />
+                    <Icon name="lock" style={styles.iconSize} />
                   </Button>
                   <H3
-                    style={{
-                      textAlign: "center",
-                      color: "#d81e5b",
-                      marginTop: 16
-                    }}
+                    style={[
+                      styles.centerText,
+                      styles.colorSecondary,
+                      styles.mt16,
+                    ]}
                   >
                     PRESS & HOLD
                   </H3>
-                  <Text style={{ textAlign: "center", marginTop: 8 }}>
+                  <Text style={[styles.centerText, styles.mt8]}>
                     To display your private key
                   </Text>
                 </View>
@@ -211,12 +224,7 @@ class PrivateKeyScreen extends Component {
               {step === "processing" && (
                 <View>
                   <Spinner color="#d81e5b" />
-                  <Text
-                    style={{
-                      textAlign: "center",
-                      marginTop: 16
-                    }}
-                  >
+                  <Text style={[styles.centerText, styles.mt16]}>
                     Processing...
                     {"\n"}
                     This might take a while.
@@ -226,46 +234,37 @@ class PrivateKeyScreen extends Component {
               {step === "processed" && (
                 <View>
                   <Text
-                    style={{
-                      textAlign: "center",
-                      fontWeight: "bold",
-                      color: "#1565c0"
-                    }}
+                    style={[
+                      styles.bold,
+                      styles.centerText,
+                      styles.colorPrimary,
+                    ]}
                   >
                     {providedPublicKey}
                   </Text>
-                  <Text
-                    style={{
-                      textAlign: "center",
-                      marginTop: 16
-                    }}
-                  >
+                  <Text style={[styles.centerText, styles.mt16]}>
                     processed private key is
                   </Text>
                   <TouchableOpacity
                     onPress={this.copyToClipboard}
-                    style={{
-                      backgroundColor: "#fff",
-                      marginTop: 8,
-                      padding: 16
-                    }}
+                    style={styles.touchable}
                   >
                     <Text
-                      style={{
-                        textAlign: "center",
-                        fontWeight: "bold",
-                        color: "#d81e5b"
-                      }}
+                      style={[
+                        styles.bold,
+                        styles.centerText,
+                        styles.colorSecondary,
+                      ]}
                     >
                       {computedPrivateKey}
                     </Text>
                     <Text
-                      style={{
-                        textAlign: "center",
-                        marginTop: 16,
-                        fontWeight: "bold",
-                        color: "#d81e5b"
-                      }}
+                      style={[
+                        styles.bold,
+                        styles.centerText,
+                        styles.colorSecondary,
+                        styles.mt16,
+                      ]}
                     >
                       COPY TO CLIPBOARD
                     </Text>
@@ -284,5 +283,5 @@ export default connect(state => ({
   providedKey1: state.inputs.key1,
   providedKey2: state.inputs.key2,
   providedPublicKey: state.inputs.publicKey,
-  currency: state.inputs.currency
+  currency: state.inputs.currency,
 }))(PrivateKeyScreen);
