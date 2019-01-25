@@ -22,7 +22,27 @@ const getPublicKeyFromWif = wif => {
   return ck.publicAddress;
 };
 
+const isValidPublicAddress = address => {
+  if (!address) return false;
+
+  try {
+    const decoded = bs58.decode(address);
+    if (decoded.length !== 25) return false;
+
+    const checksum = decoded.slice(decoded.length - 4);
+    const body = decoded.slice(0, decoded.length - 4);
+    const goodChecksum = Buffer.from(
+      sha256.digest(sha256.digest(body)).slice(0, 4)
+    );
+
+    return Buffer.compare(checksum, goodChecksum) === 0;
+  } catch (e) {
+    return false;
+  }
+};
+
 export default {
   getWIF,
   getPublicKeyFromWif,
+  isValidPublicAddress,
 };

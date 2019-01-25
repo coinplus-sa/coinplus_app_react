@@ -26,6 +26,7 @@ import {
   updatePublicKeyAction,
 } from "../redux/reducers/inputs";
 import parseScannedCode from "../util/scannedCodeParser";
+import { isValidAddress } from "../util/generic";
 
 const monospaceFont = Platform.OS === "android" ? "monospace" : "Menlo";
 
@@ -167,8 +168,10 @@ class CardFrontInputScreen extends Component {
   }
 
   render() {
-    const { navigation, publicKey, updatePublicKey } = this.props;
+    const { navigation, publicKey, currency, updatePublicKey } = this.props;
     const { bar, layoutComputed } = this.state;
+
+    const isValid = isValidAddress(publicKey, currency);
 
     const padding = 12;
     const { width: windowWidth, height: windowHeight } = Dimensions.get(
@@ -209,6 +212,7 @@ class CardFrontInputScreen extends Component {
             {layoutComputed && (
               <Item
                 regular
+                success={isValid}
                 style={[
                   styles.item,
                   {
@@ -244,6 +248,7 @@ class CardFrontInputScreen extends Component {
             <Button
               primary
               full
+              disabled={!isValid}
               onPress={() => {
                 Keyboard.dismiss();
                 navigation.navigate("CardBackInput");
@@ -261,6 +266,7 @@ class CardFrontInputScreen extends Component {
 export default connect(
   state => ({
     publicKey: state.inputs.publicKey,
+    currency: state.inputs.currency,
   }),
   dispatch => ({
     resetPublicKey: () => {
