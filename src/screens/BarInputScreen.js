@@ -26,6 +26,7 @@ import {
   updateKey2Action,
   updatePublicKeyAction,
 } from "../redux/reducers/inputs";
+import { isValidAddress } from "../util/generic";
 
 const monospaceFont = Platform.OS === "android" ? "monospace" : "Menlo";
 
@@ -115,6 +116,7 @@ class BarInputScreen extends Component {
       key1,
       key2,
       publicKey,
+      currency,
       updateKey1,
       updateKey2,
       updatePublicKey,
@@ -126,6 +128,8 @@ class BarInputScreen extends Component {
 
     const key1Valid = !!(key1 && key1.length === key1Length);
     const key2Valid = !!(key2 && key2.length === key2Length);
+
+    const publicAddressValid = isValidAddress(publicKey, currency);
 
     const padding = 24;
     const { width: windowWidth, height: windowHeight } = Dimensions.get(
@@ -208,6 +212,7 @@ class BarInputScreen extends Component {
                 </Item>
                 <Item
                   regular
+                  success={publicAddressValid}
                   style={[
                     styles.item,
                     {
@@ -236,7 +241,7 @@ class BarInputScreen extends Component {
             <Button
               primary
               full
-              disabled={!(key1Valid && key2Valid)}
+              disabled={!(key1Valid && key2Valid && publicAddressValid)}
               onPress={() => {
                 Keyboard.dismiss();
                 navigation.navigate("PrivateKey");
@@ -256,6 +261,7 @@ export default connect(
     key1: state.inputs.key1,
     key2: state.inputs.key2,
     publicKey: state.inputs.publicKey,
+    currency: state.inputs.currency,
   }),
   dispatch => ({
     resetKeys: () => {

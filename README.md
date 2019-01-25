@@ -9,10 +9,21 @@ Please follow the "Getting started" guide from React Native ("Building Projects 
 Clone the repo and type:
 
 ```sh
-npm install
-react-native link
-```
+sudo apt-get install gradle
+sudo npm install -g react-native-cli
+sudo npm install -g react-native-git-upgrade
 
+npm install
+
+
+react-native link
+
+```
+create android/local.properties
+
+```
+    sdk.dir=/home/benoit/Android/Sdk
+```
 ### Manual steps
 
 #### iOS
@@ -92,7 +103,10 @@ COINPLUS_RELEASE_KEY_PASSWORD=*****
 
 ```sh
 cd android
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ./gradlew assembleRelease
+react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/
+
 ```
 
 The generated APK can be found under `android/app/build/outputs/apk/app-release.apk`, and is ready to be distributed.

@@ -137,9 +137,13 @@ class PrivateKeyScreen extends Component {
           providedKey1,
           providedKey2
         );
-        const addressKey = Ethereum.getAddressKey(computedPrivateKey);
 
-        if (providedPublicKey.toLowerCase() !== addressKey) {
+        const keysMatch = Ethereum.isPublicAddressDerivedFromPrivateKey(
+          providedPublicKey,
+          computedPrivateKey
+        );
+
+        if (!keysMatch) {
           this.setState({ step: "mismatch" });
         } else {
           this.setState({
