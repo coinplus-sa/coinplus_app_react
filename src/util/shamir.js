@@ -1,34 +1,54 @@
-// import { Buffer } from "safe-buffer";
-import secrets from "secrets.js-grempe";
+import { Buffer } from "safe-buffer";
 import bs58 from "bs58";
+import BN from "bn.js";
 
-export const combine = (share1, share2) => {
-  const share1hex = bs58.decode(share1).toString("hex");
-  const share2hex = bs58.decode(share2).toString("hex");
+const modulus14 = new BN("4875194084160298409672797", 10);
+const modulus28 = new BN(
+  "23767517358231570773047645414309870043308402671871",
+  10
+);
 
-  console.log("share1", share1, share1hex);
-  console.log("share2", share2, share2hex);
-
-  // Each share is a string in the format <bits><id><value>.
-  // p28
-  // id 7
-
-  // p14 -> bits = 14 -> e
-  // id 4 chars
-
-  const formattedShare1 = "8" + "01" + share1hex;
-  const formattedShare2 = "8" + "02" + share2hex;
-
-  console.log("test 1", secrets.extractShareComponents(formattedShare1));
-  console.log("test 2", secrets.extractShareComponents(formattedShare2));
-
-  const secret = secrets.combine([formattedShare1, formattedShare2]);
-  console.log("secret", secret);
-
-  const bs58secret = bs58.encode(Buffer.from(secret, "hex"));
-  console.log("bs58secret", bs58secret);
-
-  return bs58secret;
+const b58strToBN = b58str => {
+  const hex = bs58.decode(b58str).toString("hex");
+  return new BN(hex, 16);
 };
 
-export default combine;
+const BNToB58str = bn => {
+  return bs58.encode(bn.toBuffer());
+};
+
+const lagrange = (shares, modulus) => {
+  let s = new BN(0);
+  shares.forEach((sharePi, pi) => {
+    let factors = new BN(1);
+    shares.forEach((sharePj, pj) => {
+      if (pi !== pj) {
+        const nom = new BN(0).sub(sharePj.x);
+        const den = sharePi.x.sub(sharePj.x);
+        const oneoverden = den.egcd(modulus).a;
+        factors = factors.mul(nom).mul(oneoverden);
+      }
+    });
+    s = s.add(sharePi.y.mul(factors));
+  });
+
+  return s.umod(modulus);
+};
+
+export const combine = (share1, share2, l = 14) => {
+  const x1 = 1;
+  const y1 = b58strToBN(share1);
+
+  const x2 = 2;
+  const y2 = b58strToBN(share2);
+
+  let modulus = null;
+
+  if (l === 14) modulus = modulus14;
+  else if (l === 28) modulus = modulus28;
+
+  const shares = [{ x: new BN(x1), y: y1 }, { x: new BN(x2), y: y2 }];
+  const secretInt = lagrange(shares, modulus);
+  const b58Secret = BNToB58str(secretInt);
+  return b58Secret;
+};
