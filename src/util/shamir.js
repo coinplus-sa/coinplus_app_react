@@ -14,7 +14,7 @@ const b58strToBN = b58str => {
 };
 
 const BNToB58str = bn => {
-  return bs58.encode(bn.toBuffer());
+  return bs58.encode(bn.toArrayLike(Buffer));
 };
 
 const lagrange = (shares, modulus) => {
@@ -35,11 +35,11 @@ const lagrange = (shares, modulus) => {
   return s.umod(modulus);
 };
 
-export const combine = (share1, share2, l = 14) => {
-  const x1 = 1;
+export const combine = ([index1, share1], [index2, share2], l = 14) => {
+  const x1 = index1;
   const y1 = b58strToBN(share1);
 
-  const x2 = 2;
+  const x2 = index2;
   const y2 = b58strToBN(share2);
 
   let modulus = null;
