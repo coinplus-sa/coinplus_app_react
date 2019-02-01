@@ -43,6 +43,9 @@ class QRScanScreen extends Component {
             topViewStyle={styles.zeroContainer}
             bottomViewStyle={styles.zeroContainer}
             fadeIn={false}
+            cameraProps={{
+              captureAudio: false,
+            }}
           />
         </Content>
       </Container>
