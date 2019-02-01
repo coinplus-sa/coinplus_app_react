@@ -36,10 +36,10 @@ const lagrange = (shares, modulus) => {
 };
 
 export const combine = ([index1, share1], [index2, share2], l = 14) => {
-  const x1 = index1;
+  const x1 = new BN(index1);
   const y1 = b58strToBN(share1);
 
-  const x2 = index2;
+  const x2 = new BN(index2);
   const y2 = b58strToBN(share2);
 
   let modulus = null;
@@ -47,7 +47,7 @@ export const combine = ([index1, share1], [index2, share2], l = 14) => {
   if (l === 14) modulus = modulus14;
   else if (l === 28) modulus = modulus28;
 
-  const shares = [{ x: new BN(x1), y: y1 }, { x: new BN(x2), y: y2 }];
+  const shares = [{ x: x1, y: y1 }, { x: x2, y: y2 }];
   const secretInt = lagrange(shares, modulus);
   const b58Secret = BNToB58str(secretInt);
   return b58Secret;
