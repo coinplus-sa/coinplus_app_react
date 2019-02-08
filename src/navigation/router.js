@@ -25,6 +25,11 @@ export default createAppContainer(
       },
       BarInput: {
         screen: BarInputScreen,
+        params: { device: "first" },
+      },
+      BarInput2: {
+        screen: BarInputScreen,
+        params: { device: "second" },
       },
       CardFrontInput: {
         screen: CardFrontInputScreen,

@@ -3,8 +3,13 @@ export const UPDATE_KEY_1 = "UPDATE_KEY_1";
 export const UPDATE_KEY_2 = "UPDATE_KEY_2";
 export const UPDATE_PRO_KEY_1 = "UPDATE_PRO_KEY_1";
 export const UPDATE_PRO_KEY_2 = "UPDATE_PRO_KEY_2";
+export const UPDATE_DEVICE_ID = "UPDATE_DEVICE_ID";
+export const UPDATE_PRO_DEVICE_ID = "UPDATE_PRO_DEVICE_ID";
 export const RESET_KEYS = "RESET_KEYS";
+export const RESET_PRO_KEYS = "RESET_PRO_KEYS";
 export const RESET_PUBLIC_KEY = "RESET_PUBLIC_KEY";
+export const RESET_DEVICE_ID = "RESET_DEVICE_ID";
+export const RESET_PRO_DEVICE_ID = "RESET_PRO_DEVICE_IDS";
 export const UPDATE_CURRENCY = "UPDATE_CURRENCY";
 export const UPDATE_MODE = "UPDATE_MODE";
 
@@ -14,11 +19,11 @@ const initialState = {
   // First card
   key1: "",
   key2: "",
-  id: 1, // 1 | 2 | 3
+  deviceId: "", // "" | "1" | "2" | "3"
   // Second card
   proKey1: "",
   proKey2: "",
-  proId: 2,
+  proDeviceId: "", // "" | "1" | "2" | "3"
   // Currency
   currency: "btc", // "btc" | "eth"
   // Mode
@@ -34,12 +39,32 @@ export default function reducer(state = initialState, action) {
       return Object.assign({}, state, { key1: action.key1 });
     case UPDATE_KEY_2:
       return Object.assign({}, state, { key2: action.key2 });
+    case UPDATE_PRO_KEY_1:
+      return Object.assign({}, state, { proKey1: action.key1 });
+    case UPDATE_PRO_KEY_2:
+      return Object.assign({}, state, { proKey2: action.key2 });
     case UPDATE_PUBLIC_KEY:
       return Object.assign({}, state, { publicKey: action.publicKey });
+    case UPDATE_DEVICE_ID:
+      return Object.assign({}, state, { deviceId: action.deviceId });
+    case UPDATE_PRO_DEVICE_ID:
+      return Object.assign({}, state, { proDeviceId: action.deviceId });
     case RESET_KEYS:
-      return Object.assign({}, state, { key1: "", key2: "" });
+      return Object.assign({}, state, {
+        key1: "",
+        key2: "",
+      });
+    case RESET_PRO_KEYS:
+      return Object.assign({}, state, {
+        proKey1: "",
+        proKey2: "",
+      });
     case RESET_PUBLIC_KEY:
       return Object.assign({}, state, { publicKey: "" });
+    case RESET_DEVICE_ID:
+      return Object.assign({}, state, { deviceId: "" });
+    case RESET_PRO_DEVICE_ID:
+      return Object.assign({}, state, { proDeviceId: "" });
     case UPDATE_CURRENCY:
       return Object.assign({}, state, { currency: action.currency });
     case UPDATE_MODE:
@@ -66,6 +91,34 @@ export function updateKey2Action(key2) {
   };
 }
 
+export function updateProKey1Action(key1) {
+  return {
+    type: UPDATE_PRO_KEY_1,
+    key1,
+  };
+}
+
+export function updateProKey2Action(key2) {
+  return {
+    type: UPDATE_PRO_KEY_2,
+    key2,
+  };
+}
+
+export function updateDeviceIdAction(deviceId) {
+  return {
+    type: UPDATE_DEVICE_ID,
+    deviceId,
+  };
+}
+
+export function updateProDeviceIdAction(deviceId) {
+  return {
+    type: UPDATE_PRO_DEVICE_ID,
+    deviceId,
+  };
+}
+
 export function updatePublicKeyAction(publicKey) {
   return {
     type: UPDATE_PUBLIC_KEY,
@@ -79,9 +132,27 @@ export function resetKeysAction() {
   };
 }
 
+export function resetProKeysAction() {
+  return {
+    type: RESET_PRO_KEYS,
+  };
+}
+
 export function resetPublicKeyAction() {
   return {
     type: RESET_PUBLIC_KEY,
+  };
+}
+
+export function resetDeviceIdAction() {
+  return {
+    type: RESET_DEVICE_ID,
+  };
+}
+
+export function resetProDeviceIdAction() {
+  return {
+    type: RESET_PRO_DEVICE_ID,
   };
 }
 

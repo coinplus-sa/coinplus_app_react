@@ -19,6 +19,7 @@ import { connect } from "react-redux";
 
 import Bitcoin from "../util/bitcoin";
 import Ethereum from "../util/ethereum";
+import { computeSoloPro } from "../util/generic";
 
 const styles = StyleSheet.create({
   publicKey: {
@@ -116,12 +117,35 @@ class PrivateKeyScreen extends Component {
       const {
         providedKey1,
         providedKey2,
+        providedDeviceId,
+        providedProKey1,
+        providedProKey2,
+        providedProDeviceId,
         providedPublicKey,
         currency,
+        mode,
       } = this.props;
 
+      const s1pro = {
+        s14: providedKey2,
+        s28: providedKey1,
+        index: providedDeviceId,
+      };
+
+      const s2pro = {
+        s14: providedProKey2,
+        s28: providedProKey1,
+        index: providedProDeviceId,
+      };
+
       if (currency === "btc") {
-        const wif = await Bitcoin.getWIF(providedKey1, providedKey2);
+        let wif = "";
+        if (mode === "pro") {
+          wif = await computeSoloPro({ s1pro, s2pro, currency });
+        } else {
+          wif = await Bitcoin.getWIF(providedKey1, providedKey2);
+        }
+
         const computedPublicKey = Bitcoin.getPublicKeyFromWif(wif);
 
         if (providedPublicKey !== computedPublicKey) {
@@ -133,10 +157,15 @@ class PrivateKeyScreen extends Component {
           });
         }
       } else {
-        const computedPrivateKey = await Ethereum.getPrivateKey(
-          providedKey1,
-          providedKey2
-        );
+        let computedPrivateKey = "";
+        if (mode === "pro") {
+          computedPrivateKey = await computeSoloPro({ s1pro, s2pro, currency });
+        } else {
+          computedPrivateKey = await Ethereum.getPrivateKey(
+            providedKey1,
+            providedKey2
+          );
+        }
 
         const keysMatch = Ethereum.isPublicAddressDerivedFromPrivateKey(
           providedPublicKey,
@@ -286,6 +315,11 @@ class PrivateKeyScreen extends Component {
 export default connect(state => ({
   providedKey1: state.inputs.key1,
   providedKey2: state.inputs.key2,
+  providedDeviceId: state.inputs.deviceId,
+  providedProKey1: state.inputs.proKey1,
+  providedProKey2: state.inputs.proKey2,
+  providedProDeviceId: state.inputs.proDeviceId,
   providedPublicKey: state.inputs.publicKey,
   currency: state.inputs.currency,
+  mode: state.inputs.mode,
 }))(PrivateKeyScreen);

@@ -7,6 +7,7 @@ import {
   Text,
   Picker,
   H3,
+  Item,
   Icon,
 } from "native-base";
 
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   picker: {
-    height: 40,
+    // height: 40,
   },
   button: {
     flexDirection: "column",
@@ -71,31 +72,35 @@ class SelectionScreen extends Component {
         >
           <H3 style={[styles.title]}>1. SELECT CRYPTO</H3>
           <View style={styles.currencyView}>
-            <Picker
-              mode="dropdown"
-              iosHeader="Select crypto"
-              iosIcon={<Icon name="ios-arrow-down" />}
-              selectedValue={currency}
-              onValueChange={updateCurrency}
-              style={styles.picker}
-            >
-              <Picker.Item label="Bitcoin BTC" value="btc" />
-              <Picker.Item label="Ethereum ETH" value="eth" />
-            </Picker>
+            <Item picker>
+              <Picker
+                mode="dropdown"
+                iosHeader="Select crypto"
+                iosIcon={<Icon name="ios-arrow-down" />}
+                selectedValue={currency}
+                onValueChange={updateCurrency}
+                style={styles.picker}
+              >
+                <Picker.Item label="Bitcoin BTC" value="btc" />
+                <Picker.Item label="Ethereum ETH" value="eth" />
+              </Picker>
+            </Item>
           </View>
           <H3 style={[styles.title, styles.mt48]}>2. SELECT MODE</H3>
           <View style={styles.currencyView}>
-            <Picker
-              mode="dropdown"
-              iosHeader="Select mode"
-              iosIcon={<Icon name="ios-arrow-down" />}
-              selectedValue={mode}
-              onValueChange={updateMode}
-              style={styles.picker}
-            >
-              <Picker.Item label="SOLO simple support" value="simple" />
-              <Picker.Item label="SOLO pro 2 of 3" value="pro" />
-            </Picker>
+            <Item picker>
+              <Picker
+                mode="dropdown"
+                iosHeader="Select mode"
+                iosIcon={<Icon name="ios-arrow-down" />}
+                selectedValue={mode}
+                onValueChange={updateMode}
+                style={styles.picker}
+              >
+                <Picker.Item label="SOLO simple support" value="simple" />
+                <Picker.Item label="SOLO pro 2 of 3" value="pro" />
+              </Picker>
+            </Item>
           </View>
           <H3 style={[styles.title, styles.mt48]}>3. SELECT FORM FACTOR</H3>
           <View style={styles.deviceView}>
