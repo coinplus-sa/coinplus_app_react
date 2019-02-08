@@ -262,6 +262,8 @@ class CardBackInputScreen extends Component {
                       {
                         top: bar.y + input3.y * scale,
                         left: input3.x * scale,
+                        width: input3.width * scale,
+                        height: 40,
                       },
                     ]}
                   >

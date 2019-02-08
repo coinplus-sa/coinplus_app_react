@@ -31,7 +31,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   picker: {
-    // height: 40,
+    height: 40,
+    width: 240,
   },
   button: {
     flexDirection: "column",
@@ -72,7 +73,7 @@ class SelectionScreen extends Component {
         >
           <H3 style={[styles.title]}>1. SELECT CRYPTO</H3>
           <View style={styles.currencyView}>
-            <Item picker>
+            <Item picker style={styles.picker}>
               <Picker
                 mode="dropdown"
                 iosHeader="Select crypto"
@@ -88,7 +89,7 @@ class SelectionScreen extends Component {
           </View>
           <H3 style={[styles.title, styles.mt48]}>2. SELECT MODE</H3>
           <View style={styles.currencyView}>
-            <Item picker>
+            <Item picker style={styles.picker}>
               <Picker
                 mode="dropdown"
                 iosHeader="Select mode"
