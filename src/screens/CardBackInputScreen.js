@@ -44,6 +44,7 @@ const ratio = originalWidth / originalHeight;
 
 const adjust = 12;
 
+// Input 1 = long input (28 chars)
 const input1 = {
   x: 82 - adjust,
   y: 342,
@@ -51,11 +52,19 @@ const input1 = {
   height: 968 - 342,
 };
 
+// Input 2 = short input (14 chars)
 const input2 = {
   x: 1762 - adjust,
   y: 342,
   width: 3316 - 1762,
   height: 717 - 342,
+};
+
+// Input 3 = Card #
+const input3 = {
+  x: 1700 - 800,
+  y: 1150,
+  width: 1600,
 };
 
 const styles = StyleSheet.create({
@@ -246,7 +255,16 @@ class CardBackInputScreen extends Component {
                   />
                 </Item>
                 {mode === "pro" && (
-                  <Item picker>
+                  <Item
+                    picker
+                    style={[
+                      styles.item,
+                      {
+                        top: bar.y + input3.y * scale,
+                        left: input3.x * scale,
+                      },
+                    ]}
+                  >
                     <Picker
                       mode="dropdown"
                       iosHeader="Select card #"
@@ -256,7 +274,9 @@ class CardBackInputScreen extends Component {
                       onValueChange={
                         device === "first" ? updateDeviceId : updateProDeviceId
                       }
-                      style={styles.picker}
+                      style={{
+                        width: input3.width * scale,
+                      }}
                     >
                       <Picker.Item label="# 1" value="1" />
                       <Picker.Item label="# 2" value="2" />

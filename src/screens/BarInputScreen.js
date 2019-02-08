@@ -46,6 +46,7 @@ const ratio = originalWidth / originalHeight;
 
 const adjust = 7;
 
+// Input 1 = long input (28 chars)
 const input1 = {
   x: 194 - adjust,
   y: 407,
@@ -53,11 +54,19 @@ const input1 = {
   height: 731 - 407,
 };
 
+// Input 2 = short input (14 chars)
 const input2 = {
   x: 194 - adjust,
-  y: 1513,
+  y: 1518,
   width: 926 - 194,
-  height: 1690 - 1513,
+  height: 1695 - 1518,
+};
+
+// Input 3 = Bar #
+const input3 = {
+  x: 560 - 732 / 2,
+  y: 1345,
+  width: 732,
 };
 
 const publicKeyInput = {
@@ -197,7 +206,11 @@ class BarInputScreen extends Component {
         <Content contentContainerStyle={{ flexGrow: 1 }}>
           <View style={styles.view}>
             <Image
-              source={require("../assets/bar-input.png")}
+              source={
+                mode === "pro"
+                  ? require("../assets/bar-input.png")
+                  : require("../assets/bar-input-logo.png")
+              }
               style={[styles.image, { width: imageWidth, height: imageHeight }]}
               onLayout={this.handleBar}
             />
@@ -255,17 +268,29 @@ class BarInputScreen extends Component {
                   />
                 </Item>
                 {mode === "pro" && (
-                  <Item picker>
+                  <Item
+                    picker
+                    style={[
+                      styles.item,
+                      styles.transparentBackground,
+                      {
+                        top: bar.y + input3.y * scale,
+                        left: input3.x * scale,
+                      },
+                    ]}
+                  >
                     <Picker
                       mode="dropdown"
                       iosHeader="Select card #"
                       iosIcon={<Icon name="ios-arrow-down" />}
                       placeholder="Select card #"
+                      placeholderStyle={{ color: "#444444" }}
+                      placeholderIconColor="#444444"
                       selectedValue={currentDeviceId}
                       onValueChange={
                         device === "first" ? updateDeviceId : updateProDeviceId
                       }
-                      style={styles.picker}
+                      style={{ width: input3.width * scale }}
                     >
                       <Picker.Item label="# 1" value="1" />
                       <Picker.Item label="# 2" value="2" />
