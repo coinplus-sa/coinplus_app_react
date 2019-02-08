@@ -1,11 +1,20 @@
 import React, { Component } from "react";
 import { Image, View, StyleSheet } from "react-native";
-import { Container, Content, Button, Text, Picker, H3 } from "native-base";
+import {
+  Container,
+  Content,
+  Button,
+  Text,
+  Picker,
+  H3,
+  Icon,
+} from "native-base";
 
 import { connect } from "react-redux";
 import {
   resetKeysAction,
   updateCurrencyAction,
+  updateModeAction,
 } from "../redux/reducers/inputs";
 
 const styles = StyleSheet.create({
@@ -20,7 +29,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 16,
   },
-  picker: { height: 40, width: 200 },
+  picker: {
+    height: 40,
+  },
   button: {
     flexDirection: "column",
     alignItems: "center",
@@ -28,9 +39,6 @@ const styles = StyleSheet.create({
   buttonLabel: {
     padding: 8,
     color: "#2c363f",
-  },
-  mt32: {
-    marginTop: 32,
   },
   mt48: {
     marginTop: 48,
@@ -44,18 +52,29 @@ class SelectionScreen extends Component {
   }
 
   render() {
-    const { navigation, currency, updateCurrency } = this.props;
+    const {
+      navigation,
+      currency,
+      mode,
+      updateCurrency,
+      updateMode,
+    } = this.props;
 
     const buttonImageHeight = 80;
     const buttonGutter = 48;
 
     return (
       <Container>
-        <Content padder>
-          <H3 style={[styles.title, styles.mt32]}>1. SELECT CURRENCY</H3>
+        <Content
+          padder
+          contentContainerStyle={{ justifyContent: "center", flex: 1 }}
+        >
+          <H3 style={[styles.title]}>1. SELECT CRYPTO</H3>
           <View style={styles.currencyView}>
             <Picker
               mode="dropdown"
+              iosHeader="Select crypto"
+              iosIcon={<Icon name="ios-arrow-down" />}
               selectedValue={currency}
               onValueChange={updateCurrency}
               style={styles.picker}
@@ -64,7 +83,21 @@ class SelectionScreen extends Component {
               <Picker.Item label="Ethereum ETH" value="eth" />
             </Picker>
           </View>
-          <H3 style={[styles.title, styles.mt48]}>2. SELECT DEVICE</H3>
+          <H3 style={[styles.title, styles.mt48]}>2. SELECT MODE</H3>
+          <View style={styles.currencyView}>
+            <Picker
+              mode="dropdown"
+              iosHeader="Select mode"
+              iosIcon={<Icon name="ios-arrow-down" />}
+              selectedValue={mode}
+              onValueChange={updateMode}
+              style={styles.picker}
+            >
+              <Picker.Item label="SOLO simple support" value="simple" />
+              <Picker.Item label="SOLO pro 2 of 3" value="pro" />
+            </Picker>
+          </View>
+          <H3 style={[styles.title, styles.mt48]}>3. SELECT FORM FACTOR</H3>
           <View style={styles.deviceView}>
             <Button
               transparent
@@ -117,6 +150,7 @@ class SelectionScreen extends Component {
 export default connect(
   state => ({
     currency: state.inputs.currency,
+    mode: state.inputs.mode,
   }),
   dispatch => ({
     resetKeys: () => {
@@ -124,6 +158,9 @@ export default connect(
     },
     updateCurrency: currency => {
       dispatch(updateCurrencyAction(currency));
+    },
+    updateMode: currency => {
+      dispatch(updateModeAction(currency));
     },
   })
 )(SelectionScreen);
