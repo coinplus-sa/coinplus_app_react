@@ -14,6 +14,13 @@ export default payload => {
   // Remove trailing "/" if there's one
   const sanitizedUrl = payload.replace(/\/$/, "");
 
-  // Return last segment
-  return sanitizedUrl.substr(sanitizedUrl.lastIndexOf("/") + 1);
+  // Extract last segment
+  const lastSegment = sanitizedUrl.substr(sanitizedUrl.lastIndexOf("/") + 1);
+
+  // SOLO pro data from QR and nfc ends with “?n=x” to identify the support.
+  // Thus we need to split the last segment with "?"
+  const splittedLastSegment = lastSegment.split("?");
+  const address = splittedLastSegment[0];
+
+  return address;
 };

@@ -24,6 +24,12 @@ test("should parse 2nd gen data with trailing slash (https://air.coinplus.com/{c
   ).toBe("1AJyJhYJJfvb1ytwL45XxLePGnGihjXtyg");
 });
 
+test("should parse SOLO pro data (https://air.coinplus.com/{currency}/{address}?n={x})", () => {
+  expect(
+    parse("https://air.coinplus.com/btc/1AJyJhYJJfvb1ytwL45XxLePGnGihjXtyg?n=2")
+  ).toBe("1AJyJhYJJfvb1ytwL45XxLePGnGihjXtyg");
+});
+
 test("should throw if payload is empty", () => {
   expect(() => parse()).toThrow("Payload can't be empty");
 });
