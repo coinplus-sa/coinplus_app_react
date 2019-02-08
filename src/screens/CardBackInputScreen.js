@@ -12,16 +12,28 @@ import {
   Content,
   Footer,
   FooterTab,
+  Icon,
   Input,
   Button,
+  Picker,
   Text,
   Item,
 } from "native-base";
 import { connect } from "react-redux";
+
 import {
   resetKeysAction,
+  resetProKeysAction,
+  resetPublicKeyAction,
+  resetDeviceIdAction,
+  resetProDeviceIdAction,
   updateKey1Action,
   updateKey2Action,
+  updateProKey1Action,
+  updateProKey2Action,
+  updatePublicKeyAction,
+  updateDeviceIdAction,
+  updateProDeviceIdAction,
 } from "../redux/reducers/inputs";
 
 const monospaceFont = Platform.OS === "android" ? "monospace" : "Menlo";
@@ -88,7 +100,16 @@ class CardBackInputScreen extends Component {
 
   constructor(props) {
     super(props);
-    props.resetKeys();
+
+    const device = props.navigation.getParam("device", "first");
+
+    if (device === "first") {
+      props.resetKeys();
+      props.resetDeviceId();
+    } else {
+      props.resetProKeys();
+      props.resetProDeviceId();
+    }
   }
 
   handleBar = event => {
@@ -99,13 +120,41 @@ class CardBackInputScreen extends Component {
   };
 
   render() {
-    const { navigation, key1, key2, updateKey1, updateKey2 } = this.props;
+    const {
+      navigation,
+      key1,
+      key2,
+      proKey1,
+      proKey2,
+      mode,
+      deviceId,
+      proDeviceId,
+      updateKey1,
+      updateKey2,
+      updateProKey1,
+      updateProKey2,
+      updateDeviceId,
+      updateProDeviceId,
+    } = this.props;
     const { bar, layoutComputed } = this.state;
+
+    const device = navigation.getParam("device", "first");
 
     const key1Length = 28;
     const key2Length = 14;
-    const key1Valid = !!(key1 && key1.length === key1Length);
-    const key2Valid = !!(key2 && key2.length === key2Length);
+
+    const key1Valid =
+      device === "first"
+        ? !!(key1 && key1.length === key1Length)
+        : !!(proKey1 && proKey1.length === key1Length);
+
+    const key2Valid =
+      device === "first"
+        ? !!(key2 && key2.length === key2Length)
+        : !!(proKey2 && proKey2.length === key2Length);
+
+    const currentDeviceId = device === "first" ? deviceId : proDeviceId;
+    const deviceIdValid = mode === "simple" ? true : !!currentDeviceId;
 
     const padding = 12;
     const { width: windowWidth, height: windowHeight } = Dimensions.get(
@@ -160,11 +209,13 @@ class CardBackInputScreen extends Component {
                 >
                   <Input
                     placeholder="Secret 1"
-                    onChangeText={updateKey1}
+                    onChangeText={
+                      device === "first" ? updateKey1 : updateProKey1
+                    }
                     maxLength={key1Length}
                     autoCapitalize="none"
                     autoCorrect={false}
-                    value={key1}
+                    value={device === "first" ? key1 : proKey1}
                     multiline
                     style={[styles.textInput, styles.textInputSecret1]}
                   />
@@ -184,14 +235,35 @@ class CardBackInputScreen extends Component {
                 >
                   <Input
                     placeholder="Secret 2"
-                    onChangeText={updateKey2}
+                    onChangeText={
+                      device === "first" ? updateKey2 : updateProKey2
+                    }
                     maxLength={key2Length}
                     autoCapitalize="none"
                     autoCorrect={false}
-                    value={key2}
+                    value={device === "first" ? key2 : proKey2}
                     style={styles.textInput}
                   />
                 </Item>
+                {mode === "pro" && (
+                  <Item picker>
+                    <Picker
+                      mode="dropdown"
+                      iosHeader="Select card #"
+                      iosIcon={<Icon name="ios-arrow-down" />}
+                      placeholder="Select card #"
+                      selectedValue={currentDeviceId}
+                      onValueChange={
+                        device === "first" ? updateDeviceId : updateProDeviceId
+                      }
+                      style={styles.picker}
+                    >
+                      <Picker.Item label="# 1" value="1" />
+                      <Picker.Item label="# 2" value="2" />
+                      <Picker.Item label="# 3" value="3" />
+                    </Picker>
+                  </Item>
+                )}
               </Fragment>
             )}
           </View>
@@ -201,13 +273,19 @@ class CardBackInputScreen extends Component {
             <Button
               primary
               full
-              disabled={!(key1Valid && key2Valid)}
+              disabled={!(key1Valid && key2Valid && deviceIdValid)}
               onPress={() => {
                 Keyboard.dismiss();
-                navigation.navigate("PrivateKey");
+                if (mode === "pro" && device === "first") {
+                  navigation.navigate("CardBackInput2");
+                } else {
+                  navigation.navigate("PrivateKey");
+                }
               }}
             >
-              <Text style={styles.colorWhite}>Process</Text>
+              <Text style={styles.colorWhite}>
+                {mode === "pro" && device === "first" ? "Next" : "Process"}
+              </Text>
             </Button>
           </FooterTab>
         </Footer>
@@ -220,16 +298,50 @@ export default connect(
   state => ({
     key1: state.inputs.key1,
     key2: state.inputs.key2,
+    proKey1: state.inputs.proKey1,
+    proKey2: state.inputs.proKey2,
+    publicKey: state.inputs.publicKey,
+    currency: state.inputs.currency,
+    mode: state.inputs.mode,
+    deviceId: state.inputs.deviceId,
+    proDeviceId: state.inputs.proDeviceId,
   }),
   dispatch => ({
     resetKeys: () => {
       dispatch(resetKeysAction());
+    },
+    resetProKeys: () => {
+      dispatch(resetProKeysAction());
+    },
+    resetPublicKey: () => {
+      dispatch(resetPublicKeyAction());
+    },
+    resetDeviceId: () => {
+      dispatch(resetDeviceIdAction());
+    },
+    resetProDeviceId: () => {
+      dispatch(resetProDeviceIdAction());
     },
     updateKey1: key => {
       dispatch(updateKey1Action(key));
     },
     updateKey2: key => {
       dispatch(updateKey2Action(key));
+    },
+    updateProKey1: key => {
+      dispatch(updateProKey1Action(key));
+    },
+    updateProKey2: key => {
+      dispatch(updateProKey2Action(key));
+    },
+    updatePublicKey: key => {
+      dispatch(updatePublicKeyAction(key));
+    },
+    updateDeviceId: deviceId => {
+      dispatch(updateDeviceIdAction(deviceId));
+    },
+    updateProDeviceId: deviceId => {
+      dispatch(updateProDeviceIdAction(deviceId));
     },
   })
 )(CardBackInputScreen);

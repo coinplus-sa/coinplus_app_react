@@ -36,6 +36,11 @@ export default createAppContainer(
       },
       CardBackInput: {
         screen: CardBackInputScreen,
+        params: { device: "first" },
+      },
+      CardBackInput2: {
+        screen: CardBackInputScreen,
+        params: { device: "second" },
       },
       PrivateKey: {
         screen: PrivateKeyScreen,
