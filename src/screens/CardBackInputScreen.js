@@ -269,9 +269,9 @@ class CardBackInputScreen extends Component {
                   >
                     <Picker
                       mode="dropdown"
-                      iosHeader="Select card #"
+                      //iosHeader="Select card #"
                       iosIcon={<Icon name="ios-arrow-down" />}
-                      placeholder="Select card #"
+                      //placeholder="Select card #"
                       selectedValue={currentDeviceId}
                       onValueChange={
                         device === "first" ? updateDeviceId : updateProDeviceId
@@ -280,6 +280,7 @@ class CardBackInputScreen extends Component {
                         width: input3.width * scale,
                       }}
                     >
+                      <Picker.Item label="Select card #" value="" />
                       <Picker.Item label="# 1" value="1" />
                       <Picker.Item label="# 2" value="2" />
                       <Picker.Item label="# 3" value="3" />
