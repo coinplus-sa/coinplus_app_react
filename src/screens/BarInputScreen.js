@@ -283,7 +283,7 @@ class BarInputScreen extends Component {
                   >
                     <Picker
                       mode="dropdown"
-                      iosHeader="Select bar #"
+                      //iosHeader="Select bar #"
                       iosIcon={<Icon name="ios-arrow-down" />}
                       placeholder="Select bar #"
                       placeholderStyle={{ color: "#444444" }}
@@ -294,6 +294,7 @@ class BarInputScreen extends Component {
                       }
                       style={{ width: input3.width * scale }}
                     >
+                      <Picker.Item label="Select bar #" value="" />
                       <Picker.Item label="# 1" value="1" />
                       <Picker.Item label="# 2" value="2" />
                       <Picker.Item label="# 3" value="3" />
