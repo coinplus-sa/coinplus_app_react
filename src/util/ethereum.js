@@ -4,7 +4,10 @@ import computePrivateKeySec256k1 from "./computePrivateKeySec256k1";
 
 const getPrivateKey = async (secret1B58, secret2B58) => {
   const privkeyb256 = await computePrivateKeySec256k1(secret1B58, secret2B58);
-  const privateKey = privkeyb256.toString(16);
+  let privateKey = privkeyb256.toString(16);
+  while (privateKey.length < 64) {
+    privateKey = `0${privateKey}`;
+  }
   return privateKey;
 };
 
