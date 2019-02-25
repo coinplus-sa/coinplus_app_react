@@ -69,6 +69,11 @@ jest.mock("react-native-scrypt", () => ({
     privateKey:
       "c10db20826b4200868097f04471574005bdc93fa71af93926685a12266f61f1b",
   },
+  {
+    publicKey: "0xff517fd8B6a4Ba15E3eC5dC86963ea49452fE1C1",
+    privateKey:
+      "02eda266f31ebb927ba83e560577ea6615bf3d0bc234132a290e6f109728edab",
+  },
 ].map(({ publicKey, privateKey }) =>
   test(`Expect ${publicKey} to be derived from ${privateKey}`, () => {
     expect(
@@ -102,6 +107,12 @@ jest.mock("react-native-scrypt", () => ({
     key2: "RR3EoufJ5utQXf",
     expectedPrivateKey:
       "c10db20826b4200868097f04471574005bdc93fa71af93926685a12266f61f1b",
+  },
+  {
+    key1: "JLaxbNLqpmnrDPE9A8m6rb718nt4",
+    key2: "Q4qQMjdn4HeKQu",
+    expectedPrivateKey:
+      "02eda266f31ebb927ba83e560577ea6615bf3d0bc234132a290e6f109728edab",
   },
 ].map(({ key1, key2, expectedPrivateKey }) =>
   test(`For keys ['${key1}', '${key2}'], expects private key = '${expectedPrivateKey}'`, async () => {

@@ -283,9 +283,7 @@ class BarInputScreen extends Component {
                   >
                     <Picker
                       mode="dropdown"
-                      //iosHeader="Select bar #"
                       iosIcon={<Icon name="ios-arrow-down" />}
-                      //placeholder="Select bar #"
                       placeholderStyle={{ color: "#444444" }}
                       placeholderIconColor="#444444"
                       selectedValue={currentDeviceId}
