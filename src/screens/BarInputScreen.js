@@ -164,17 +164,40 @@ class BarInputScreen extends Component {
 
     const key1Length = 28;
     const key2Length = 14;
+    const newkeyLength = 30;
 
+    var key1toverif = key1;
+    var key2toverif = key2;
+    if (mode === "pro" && device !== "first") {
+        var key1toverif = proKey1;
+        var key2toverif = proKey2;
+    }
     const key1Valid =
       device === "first"
-        ? !!(key1 && key1.length === key1Length)
+        ? !!(key1 && (key1.length === key1Length || key1.length === newkeyLength))
         : !!(proKey1 && proKey1.length === key1Length);
 
     const key2Valid =
       device === "first"
-        ? !!(key2 && key2.length === key2Length)
+        ? !!(key2 && (key2.length === key2Length || key2.length === newkeyLength))
         : !!(proKey2 && proKey2.length === key2Length);
-
+    var error = null; 
+    if(key1toverif.length == newkeyLength){
+        var key1valid =false;
+        key1valid = verify_solo_check(key1toverif, 1)
+        if (!key1valid){
+            error = "secret 1 checksum error, verify that you entered secret 1 correctly.";
+        
+        }
+      }
+    if(key2toverif.length == newkeyLength){
+        var key2valid =false;
+        key2valid = verify_solo_check(key2toverif, 1)
+        if (!key2valid){
+            error = "secret 2 checksum error, verify that you entered secret 2 correctly.";
+        }
+      }
+      
     const currentDeviceId = device === "first" ? deviceId : proDeviceId;
     const deviceIdValid = mode === "simple" ? true : !!currentDeviceId;
 
@@ -234,7 +257,7 @@ class BarInputScreen extends Component {
                     onChangeText={
                       device === "first" ? updateKey1 : updateProKey1
                     }
-                    maxLength={key1Length}
+                    maxLength={newkeyLength}
                     autoCapitalize="none"
                     autoCorrect={false}
                     value={device === "first" ? key1 : proKey1}
@@ -260,7 +283,7 @@ class BarInputScreen extends Component {
                     onChangeText={
                       device === "first" ? updateKey2 : updateProKey2
                     }
-                    maxLength={key2Length}
+                    maxLength={newkeyLength}
                     autoCapitalize="none"
                     autoCorrect={false}
                     value={device === "first" ? key2 : proKey2}
@@ -334,13 +357,15 @@ class BarInputScreen extends Component {
                 !(key1Valid && key2Valid && publicAddressValid && deviceIdValid)
               }
               onPress={() => {
-                Keyboard.dismiss();
-                if (mode === "pro" && device === "first") {
-                  navigation.navigate("BarInput2");
-                } else {
-                  navigation.navigate("PrivateKey");
+                if (error === null){
+                  Keyboard.dismiss();
+                  if (mode === "pro" && device === "first") {
+                    navigation.navigate("BarInput2");
+                  } else {
+                    navigation.navigate("PrivateKey");
+                  }
                 }
-              }}
+               }}
             >
               <Text style={styles.colorWhite}>
                 {mode === "pro" && device === "first" ? "Next" : "Process"}

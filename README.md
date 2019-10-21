@@ -122,3 +122,22 @@ Next steps:
 ### iOS
 
 ...
+
+## Change version code:
+
+package.json:
+    {
+      "name": "coinplus_solo",
+      "version": "1.1.2",
+
+
+### android:
+android/app/build.gradle
+    ///
+    android{
+        defaultConfig{
+    ///
+
+            versionCode 20
+            versionName "1.1.1"
+### ios

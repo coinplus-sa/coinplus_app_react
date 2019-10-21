@@ -7,6 +7,12 @@ const N = new BN(
 );
 
 const computePrivateKeySec256k1 = async (secret1B58, secret2B58) => {
+  if(secret1B58.length == 30){
+    secret1B58 = secret1B58.slice(0,29)
+  }
+  if(secret2B58.length == 30){
+    secret2B58 = secret2B58.slice(0,29)
+  }
   const hashedSecret1 = await scrypt(secret1B58, [], 16384, 8, 8, 32);
   const hashedSecret2 = await scrypt(secret2B58, [], 16384, 8, 8, 32);
 

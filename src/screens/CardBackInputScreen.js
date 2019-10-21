@@ -36,6 +36,11 @@ import {
   updateProDeviceIdAction,
 } from "../redux/reducers/inputs";
 
+import {
+    verify_solo_check,
+
+} from "../util/generic";
+
 const monospaceFont = Platform.OS === "android" ? "monospace" : "Menlo";
 
 const originalWidth = 3400;
@@ -44,7 +49,7 @@ const ratio = originalWidth / originalHeight;
 
 const adjust = 12;
 
-// Input 1 = long input (28 chars)
+// Input 1 = long input (28 chars) or 30 
 const input1 = {
   x: 82 - adjust,
   y: 342,
@@ -52,12 +57,12 @@ const input1 = {
   height: 968 - 342,
 };
 
-// Input 2 = short input (14 chars)
+// Input 2 = short input (14 chars) or 30 
 const input2 = {
   x: 1762 - adjust,
   y: 342,
   width: 3316 - 1762,
-  height: 717 - 342,
+  height: 968 - 342,
 };
 
 // Input 3 = Card #
@@ -88,7 +93,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     textAlignVertical: "center",
   },
-  textInputSecret1: {
+  textInputSecret: {
     lineHeight: 18,
     height: 36,
     textAlignVertical: "top",
@@ -151,15 +156,16 @@ class CardBackInputScreen extends Component {
 
     const key1Length = 28;
     const key2Length = 14;
+    const newkeyLength = 30;
 
     const key1Valid =
       device === "first"
-        ? !!(key1 && key1.length === key1Length)
+        ? !!(key1 && (key1.length === key1Length || key1.length === newkeyLength))
         : !!(proKey1 && proKey1.length === key1Length);
 
     const key2Valid =
       device === "first"
-        ? !!(key2 && key2.length === key2Length)
+        ? !!(key2 && (key2.length === key2Length || key2.length === newkeyLength))
         : !!(proKey2 && proKey2.length === key2Length);
 
     const currentDeviceId = device === "first" ? deviceId : proDeviceId;
@@ -170,6 +176,29 @@ class CardBackInputScreen extends Component {
       "window"
     );
 
+    var key1toverif = key1;
+    var key2toverif = key2;
+    if (mode === "pro" && device !== "first") {
+        var key1toverif = proKey1;
+        var key2toverif = proKey2;
+    }
+    var error = null; 
+    if(key1toverif.length == newkeyLength){
+        var key1valid =false;
+        key1valid = verify_solo_check(key1toverif, 1)
+        if (!key1valid){
+            error = "secret 1 checksum error, verify that you entered secret 1 correctly.";
+        
+        }
+      }
+    if(key2toverif.length == newkeyLength){
+        var key2valid =false;
+        key2valid = verify_solo_check(key2toverif, 1)
+        if (!key2valid){
+            error = "secret 2 checksum error, verify that you entered secret 2 correctly.";
+        }
+      }
+      
     let imageWidth = 0;
     let imageHeight = 0;
 
@@ -221,12 +250,12 @@ class CardBackInputScreen extends Component {
                     onChangeText={
                       device === "first" ? updateKey1 : updateProKey1
                     }
-                    maxLength={key1Length}
+                    maxLength={newkeyLength}
                     autoCapitalize="none"
                     autoCorrect={false}
                     value={device === "first" ? key1 : proKey1}
                     multiline
-                    style={[styles.textInput, styles.textInputSecret1]}
+                    style={[styles.textInput, styles.textInputSecret]}
                   />
                 </Item>
                 <Item
@@ -247,11 +276,11 @@ class CardBackInputScreen extends Component {
                     onChangeText={
                       device === "first" ? updateKey2 : updateProKey2
                     }
-                    maxLength={key2Length}
+                    maxLength={newkeyLength}
                     autoCapitalize="none"
                     autoCorrect={false}
                     value={device === "first" ? key2 : proKey2}
-                    style={styles.textInput}
+                    style={[styles.textInput, styles.textInputSecret]}
                   />
                 </Item>
                 {mode === "pro" && (
@@ -296,11 +325,16 @@ class CardBackInputScreen extends Component {
               full
               disabled={!(key1Valid && key2Valid && deviceIdValid)}
               onPress={() => {
-                Keyboard.dismiss();
-                if (mode === "pro" && device === "first") {
-                  navigation.navigate("CardBackInput2");
-                } else {
-                  navigation.navigate("PrivateKey");
+                if (error === null){
+                    Keyboard.dismiss();
+                    if (mode === "pro" && device === "first") {
+                      navigation.navigate("CardBackInput2");
+                    } else {
+                      navigation.navigate("PrivateKey");
+                    }
+                }
+                else{
+                    alert(error)
                 }
               }}
             >
