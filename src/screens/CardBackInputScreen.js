@@ -280,6 +280,7 @@ class CardBackInputScreen extends Component {
                     autoCapitalize="none"
                     autoCorrect={false}
                     value={device === "first" ? key2 : proKey2}
+                    multiline
                     style={[styles.textInput, styles.textInputSecret]}
                   />
                 </Item>
