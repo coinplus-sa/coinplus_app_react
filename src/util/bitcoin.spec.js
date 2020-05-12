@@ -27,6 +27,10 @@ jest.mock("react-native-scrypt", () => ({
 // Tests: public keys validation
 [
   {
+    address: "LLs788LkRF5o3VePbE16JN6iqWiZMMzpBt",
+    valid: false,
+  },
+  {
     address: "1AJyJhYJJfvb1ytwL45XxLePGnGihjXtyg",
     valid: true,
   },
@@ -62,7 +66,7 @@ jest.mock("react-native-scrypt", () => ({
 const generateTest = (key1, key2, expectedWif, expectedPublicKey) => {
   test(`For keys ['${key1}', '${key2}'], expects:\nWIF = '${expectedWif}'\nPublic key = '${expectedPublicKey}'`, async () => {
     expect.assertions(2);
-    const wif = await Bitcoin.getWIF(key1, key2);
+    const wif = await Bitcoin.getWifBTC(key1, key2);
     const publicKey = Bitcoin.getPublicKeyFromWif(wif);
 
     expect(wif).toEqual(expectedWif);

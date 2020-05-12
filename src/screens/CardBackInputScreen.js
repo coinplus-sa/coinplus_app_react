@@ -36,10 +36,7 @@ import {
   updateProDeviceIdAction,
 } from "../redux/reducers/inputs";
 
-import {
-    verify_solo_check,
-
-} from "../util/generic";
+import { verifySoloCheck } from "../util/generic";
 
 const monospaceFont = Platform.OS === "android" ? "monospace" : "Menlo";
 
@@ -49,7 +46,7 @@ const ratio = originalWidth / originalHeight;
 
 const adjust = 12;
 
-// Input 1 = long input (28 chars) or 30 
+// Input 1 = long input (28 chars) or 30
 const input1 = {
   x: 82 - adjust,
   y: 342,
@@ -57,7 +54,7 @@ const input1 = {
   height: 968 - 342,
 };
 
-// Input 2 = short input (14 chars) or 30 
+// Input 2 = short input (14 chars) or 30
 const input2 = {
   x: 1762 - adjust,
   y: 342,
@@ -160,12 +157,18 @@ class CardBackInputScreen extends Component {
 
     const key1Valid =
       device === "first"
-        ? !!(key1 && (key1.length === key1Length || key1.length === newkeyLength))
+        ? !!(
+            key1 &&
+            (key1.length === key1Length || key1.length === newkeyLength)
+          )
         : !!(proKey1 && proKey1.length === key1Length);
 
     const key2Valid =
       device === "first"
-        ? !!(key2 && (key2.length === key2Length || key2.length === newkeyLength))
+        ? !!(
+            key2 &&
+            (key2.length === key2Length || key2.length === newkeyLength)
+          )
         : !!(proKey2 && proKey2.length === key2Length);
 
     const currentDeviceId = device === "first" ? deviceId : proDeviceId;
@@ -176,29 +179,30 @@ class CardBackInputScreen extends Component {
       "window"
     );
 
-    var key1toverif = key1;
-    var key2toverif = key2;
+    let key1toverif = key1;
+    let key2toverif = key2;
     if (mode === "pro" && device !== "first") {
-        var key1toverif = proKey1;
-        var key2toverif = proKey2;
+      key1toverif = proKey1;
+      key2toverif = proKey2;
     }
-    var error = null; 
-    if(key1toverif.length == newkeyLength){
-        var key1valid =false;
-        key1valid = verify_solo_check(key1toverif, 1)
-        if (!key1valid){
-            error = "secret 1 checksum error, verify that you entered secret 1 correctly.";
-        
-        }
+    let error = null;
+    if (key1toverif.length === newkeyLength) {
+      let key1valid = false;
+      key1valid = verifySoloCheck(key1toverif, 1);
+      if (!key1valid) {
+        error =
+          "secret 1 checksum error, verify that you entered secret 1 correctly.";
       }
-    if(key2toverif.length == newkeyLength){
-        var key2valid =false;
-        key2valid = verify_solo_check(key2toverif, 1)
-        if (!key2valid){
-            error = "secret 2 checksum error, verify that you entered secret 2 correctly.";
-        }
+    }
+    if (key2toverif.length === newkeyLength) {
+      let key2valid = false;
+      key2valid = verifySoloCheck(key2toverif, 1);
+      if (!key2valid) {
+        error =
+          "secret 2 checksum error, verify that you entered secret 2 correctly.";
       }
-      
+    }
+
     let imageWidth = 0;
     let imageHeight = 0;
 
@@ -326,16 +330,15 @@ class CardBackInputScreen extends Component {
               full
               disabled={!(key1Valid && key2Valid && deviceIdValid)}
               onPress={() => {
-                if (error === null){
-                    Keyboard.dismiss();
-                    if (mode === "pro" && device === "first") {
-                      navigation.navigate("CardBackInput2");
-                    } else {
-                      navigation.navigate("PrivateKey");
-                    }
-                }
-                else{
-                    alert(error)
+                if (error === null) {
+                  Keyboard.dismiss();
+                  if (mode === "pro" && device === "first") {
+                    navigation.navigate("CardBackInput2");
+                  } else {
+                    navigation.navigate("PrivateKey");
+                  }
+                } else {
+                  alert(error);
                 }
               }}
             >

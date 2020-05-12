@@ -5,16 +5,20 @@ import CoinKey from "coinkey";
 
 import computePrivateKeySec256k1 from "./computePrivateKeySec256k1";
 
-const getWIF = async (secret1B58, secret2B58) => {
+const getWif = async (secret1B58, secret2B58, firstByte) => {
   const privkeyB256 = await computePrivateKeySec256k1(secret1B58, secret2B58);
 
-  const toDigest = [128, ...privkeyB256.toArray(256), 1];
+  const toDigest = [firstByte, ...privkeyB256.toArray(256), 1];
   const doublesha256 = sha256.digest(sha256.digest(toDigest));
   const finalPrivkeyB256 = [...toDigest, ...doublesha256.slice(0, 4)];
 
   const wif = bs58.encode(Buffer.from(finalPrivkeyB256));
 
   return wif;
+};
+
+const getWifBTC = async (secret1B58, secret2B58) => {
+  return getWif(secret1B58, secret2B58, 128);
 };
 
 const getPublicKeyFromWif = wif => {
@@ -34,7 +38,9 @@ const isValidPublicAddress = address => {
     const goodChecksum = Buffer.from(
       sha256.digest(sha256.digest(body)).slice(0, 4)
     );
-
+    if (decoded[0] !== 0x00) {
+      return false;
+    }
     return Buffer.compare(checksum, goodChecksum) === 0;
   } catch (e) {
     return false;
@@ -42,7 +48,8 @@ const isValidPublicAddress = address => {
 };
 
 export default {
-  getWIF,
+  getWif,
+  getWifBTC,
   getPublicKeyFromWif,
   isValidPublicAddress,
 };

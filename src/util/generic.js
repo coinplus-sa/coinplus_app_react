@@ -1,59 +1,128 @@
+import cryptojs from "crypto-js";
+import BN from "bn.js";
 import Bitcoin from "./bitcoin";
+import Litecoin from "./litecoin";
 import Ethereum from "./ethereum";
 import { combine } from "./shamir";
-import scrypt from 'scrypt-async'
-import cryptojs from "crypto-js"
-import BN from 'bn.js'
 
-const bitcoinB58chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
-var bitcoinB58charsValues = {}
-for (var i in bitcoinB58chars) {
-  bitcoinB58charsValues[bitcoinB58chars[i]] = parseInt(i)
+const bitcoinB58chars =
+  "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+/* 
+const bitcoinB58charsValues = {
+  "1": 0,
+  "2": 1,
+  "3": 2,
+  "4": 3,
+  "5": 4,
+  "6": 5,
+  "7": 6,
+  "8": 7,
+  "9": 8,
+  A: 9,
+  B: 10,
+  C: 11,
+  D: 12,
+  E: 13,
+  F: 14,
+  G: 15,
+  H: 16,
+  J: 17,
+  K: 18,
+  L: 19,
+  M: 20,
+  N: 21,
+  P: 22,
+  Q: 23,
+  R: 24,
+  S: 25,
+  T: 26,
+  U: 27,
+  V: 28,
+  W: 29,
+  X: 30,
+  Y: 31,
+  Z: 32,
+  a: 33,
+  b: 34,
+  c: 35,
+  d: 36,
+  e: 37,
+  f: 38,
+  g: 39,
+  h: 40,
+  i: 41,
+  j: 42,
+  k: 43,
+  m: 44,
+  n: 45,
+  o: 46,
+  p: 47,
+  q: 48,
+  r: 49,
+  s: 50,
+  t: 51,
+  u: 52,
+  v: 53,
+  w: 54,
+  x: 55,
+  y: 56,
+  z: 57
 }
 
+*/
 
+/*
 
-const N = new BN('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141', 16, "be")
+const N = new BN(
+  "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141",
+  16,
+  "be"
+);
+*/
 
-async function scryptProm (secrect) {
-    const promise = new Promise((resolve, reject) => {
-        scrypt(secrect, [], {N: 16384, r: 8, p: 8, dkLen: 32}, (res) => {
-            resolve(res)
-        })
-    })
-    return promise
+/*
+async function scryptProm(secrect) {
+  const promise = new Promise((resolve, reject) => {
+    scrypt(secrect, [], { N: 16384, r: 8, p: 8, dkLen: 32 }, res => {
+      resolve(res);
+    });
+  });
+  return promise;
 }
-function base58encode (value, length) {
-  const b58chars = bitcoinB58chars
-  var result = ''
-  
+*/
+
+function base58encode(valueArg, length) {
+  const b58chars = bitcoinB58chars;
+  let result = "";
+  let value = valueArg;
+
   while (!value.isZero()) {
-    var r = value.divmod(new BN(58))
-    result = b58chars[r.mod] + result
-    value = r.div
+    const r = value.divmod(new BN(58));
+    result = b58chars[r.mod] + result;
+    value = r.div;
   }
-  var inilen = result.length;
-  for (var i = 0; i < length - inilen ; i++) {
-    result = b58chars[0] + result
+  const inilen = result.length;
+  for (let i = 0; i < length - inilen; i += 1) {
+    result = b58chars[0] + result;
   }
-  return result
+  return result;
 }
 
-
-export function verify_solo_check(string, size)
-{
-    var raw = string.slice(0, -size);
-    var h = cryptojs.SHA256(cryptojs.SHA256(raw)).toString();
-    var b = new BN(h, 16, "le");
-    var b58 = new BN(58);
-    var check = b.mod(b58.pow(new BN(size)));
-    return base58encode(check, length=size) == string.slice(-size);
+export function verifySoloCheck(string, size) {
+  const raw = string.slice(0, -size);
+  const h = cryptojs.SHA256(cryptojs.SHA256(raw)).toString();
+  const b = new BN(h, 16, "le");
+  const b58 = new BN(58);
+  const check = b.mod(b58.pow(new BN(size)));
+  return base58encode(check, size) === string.slice(-size);
 }
-
 
 export const isValidAddress = (address, currency) => {
   if (currency === "btc") {
     return Bitcoin.isValidPublicAddress(address);
+  }
+  if (currency === "ltc") {
+    return Litecoin.isValidPublicAddress(address);
   }
 
   if (currency === "eth") {
@@ -73,7 +142,9 @@ export const computeSoloPro = async ({
 
   let privateKey = "";
   if (currency === "btc") {
-    privateKey = await Bitcoin.getWIF(s28, s14);
+    privateKey = await Bitcoin.getWifBTC(s28, s14);
+  } else if (currency === "ltc") {
+    privateKey = await Litecoin.getPrivateKey(s28, s14);
   } else if (currency === "eth") {
     privateKey = await Ethereum.getPrivateKey(s28, s14);
   }

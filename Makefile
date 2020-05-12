@@ -4,6 +4,9 @@ d := $(shell docker ps -a -q)
 build:
 	docker build -f docker/android/Dockerfile -t android_build .
 
+run_test:
+	docker exec -it android_build /bin/bash -c '. /root/.nvm/nvm.sh && cd /coinplus_app_react/ && npm test'
+
 run:
 	docker run --rm -i -t  --name android_build android_build
   

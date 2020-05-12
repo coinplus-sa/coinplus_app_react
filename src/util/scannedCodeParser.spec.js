@@ -18,6 +18,12 @@ test("should parse 2nd gen data (https://air.coinplus.com/{currency}/{address})"
   ).toBe("1AJyJhYJJfvb1ytwL45XxLePGnGihjXtyg");
 });
 
+test("should parse 2nd gen data2 (https://air.coinplus.com/{currency}/{address})", () => {
+  expect(
+    parse("https://air.coinplus.com/ltc/LLs788LkRF5o3VePbE16JN6iqWiZMMzpBt")
+  ).toBe("LLs788LkRF5o3VePbE16JN6iqWiZMMzpBt");
+});
+
 test("should parse 2nd gen data with trailing slash (https://air.coinplus.com/{currency}/{address})/", () => {
   expect(
     parse("https://air.coinplus.com/btc/1AJyJhYJJfvb1ytwL45XxLePGnGihjXtyg/")

@@ -18,6 +18,7 @@ import {
 import { connect } from "react-redux";
 
 import Bitcoin from "../util/bitcoin";
+import Litcoin from "../util/litecoin";
 import Ethereum from "../util/ethereum";
 import { computeSoloPro } from "../util/generic";
 
@@ -143,10 +144,28 @@ class PrivateKeyScreen extends Component {
         if (mode === "pro") {
           wif = await computeSoloPro({ s1pro, s2pro, currency });
         } else {
-          wif = await Bitcoin.getWIF(providedKey1, providedKey2);
+          wif = await Bitcoin.getWifBTC(providedKey1, providedKey2);
         }
 
         const computedPublicKey = Bitcoin.getPublicKeyFromWif(wif);
+
+        if (providedPublicKey !== computedPublicKey) {
+          this.setState({ step: "mismatch" });
+        } else {
+          this.setState({
+            computedPrivateKey: wif,
+            step: "processed",
+          });
+        }
+      } else if (currency === "ltc") {
+        let wif = "";
+        if (mode === "pro") {
+          wif = await computeSoloPro({ s1pro, s2pro, currency });
+        } else {
+          wif = await Litcoin.getWifLTC(providedKey1, providedKey2);
+        }
+
+        const computedPublicKey = Litcoin.getPublicKeyFromWif(wif);
 
         if (providedPublicKey !== computedPublicKey) {
           this.setState({ step: "mismatch" });
