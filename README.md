@@ -140,4 +140,18 @@ android/app/build.gradle
 
             versionCode 20
             versionName "1.1.1"
+            
+
+
 ### ios
+./ios/coinplus_solo/Info.plist
+
+
+## signature:
+
+### android
+
+    jarsigner -sigalg SHA1withRSA -digestalg SHA1  -keystore /mnt/dec_coinplus/app_key/apk.private.key.keystore /tmp/com.coinplus.mobile.0.1.1.apk Coinplus
+
+    zipalign -f  4  /tmp/com.coinplus.mobile.0.1.1.apk /tmp/1/com.coinplus.mobile.0.1.1.apk
+

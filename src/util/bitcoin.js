@@ -5,20 +5,36 @@ import CoinKey from "coinkey";
 
 import computePrivateKeySec256k1 from "./computePrivateKeySec256k1";
 
-const getWif = async (secret1B58, secret2B58, firstByte) => {
+const getWif = async (secret1B58, secret2B58) => {
   const privkeyB256 = await computePrivateKeySec256k1(secret1B58, secret2B58);
+  const formats = {
+    bitcoin: { first: [128], compressed: true },
+    litecoin: { first: [176], compressed: true },
+    tezos: { first: [17, 162, 224, 201], compressed: false },
+    bitcoincash: { first: [128], compressed: true },
+  };
+  // eslint-disable-next-line prefer-const
+  let outputs = {};
+  let toDigest;
+  let doublesha256;
+  let finalPrivkeyB256;
+  Object.keys(formats).forEach(format => {
+    if (formats[format].compressed) {
+      toDigest = [...formats[format].first, ...privkeyB256.toArray(256), 1];
+    } else {
+      toDigest = [...formats[format].first, ...privkeyB256.toArray(256)];
+    }
+    doublesha256 = sha256.digest(sha256.digest(toDigest));
+    finalPrivkeyB256 = [...toDigest, ...doublesha256.slice(0, 4)];
 
-  const toDigest = [firstByte, ...privkeyB256.toArray(256), 1];
-  const doublesha256 = sha256.digest(sha256.digest(toDigest));
-  const finalPrivkeyB256 = [...toDigest, ...doublesha256.slice(0, 4)];
-
-  const wif = bs58.encode(Buffer.from(finalPrivkeyB256));
-
-  return wif;
+    outputs[format] = bs58.encode(Buffer.from(finalPrivkeyB256));
+  });
+  return outputs;
 };
 
 const getWifBTC = async (secret1B58, secret2B58) => {
-  return getWif(secret1B58, secret2B58, 128);
+  const { bitcoin } = await getWif(secret1B58, secret2B58);
+  return bitcoin;
 };
 
 const getPublicKeyFromWif = wif => {

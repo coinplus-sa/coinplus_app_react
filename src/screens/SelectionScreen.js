@@ -83,8 +83,10 @@ class SelectionScreen extends Component {
                 style={styles.picker}
               >
                 <Picker.Item label="Bitcoin BTC" value="btc" />
+                <Picker.Item label="Bitcoin Cash BCH" value="bch" />
                 <Picker.Item label="Litecoin LTC" value="ltc" />
                 <Picker.Item label="Ethereum ETH" value="eth" />
+                <Picker.Item label="Tezos XTZ" value="xtz" />
               </Picker>
             </Item>
           </View>

@@ -6,7 +6,8 @@ import CoinKey from "coinkey";
 import Bitcoin from "./bitcoin";
 
 const getWifLTC = async (secret1B58, secret2B58) => {
-  return Bitcoin.getWif(secret1B58, secret2B58, 176);
+  const { litecoin } = await Bitcoin.getWif(secret1B58, secret2B58);
+  return litecoin;
 };
 
 const getPublicKeyFromWif = wif => {

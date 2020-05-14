@@ -18,7 +18,9 @@ import {
 import { connect } from "react-redux";
 
 import Bitcoin from "../util/bitcoin";
+import BitcoinCash from "../util/bitcoincash";
 import Litcoin from "../util/litecoin";
+import Tezos from "../util/tezos";
 import Ethereum from "../util/ethereum";
 import { computeSoloPro } from "../util/generic";
 
@@ -138,15 +140,22 @@ class PrivateKeyScreen extends Component {
         s28: providedProKey1,
         index: providedProDeviceId,
       };
+      let secret1;
+      let secret2;
+      if (mode === "pro") {
+        ({ secret1, secret2 } = await computeSoloPro({
+          s1pro,
+          s2pro,
+          currency,
+        }));
+      } else {
+        secret1 = providedKey1;
+        secret2 = providedKey2;
+      }
 
       if (currency === "btc") {
         let wif = "";
-        if (mode === "pro") {
-          wif = await computeSoloPro({ s1pro, s2pro, currency });
-        } else {
-          wif = await Bitcoin.getWifBTC(providedKey1, providedKey2);
-        }
-
+        wif = await Bitcoin.getWifBTC(secret1, secret2);
         const computedPublicKey = Bitcoin.getPublicKeyFromWif(wif);
 
         if (providedPublicKey !== computedPublicKey) {
@@ -157,13 +166,34 @@ class PrivateKeyScreen extends Component {
             step: "processed",
           });
         }
+      } else if (currency === "bch") {
+        let wif = "";
+        wif = await BitcoinCash.getWifBCH(secret1, secret2);
+
+        const computedPublicKey = BitcoinCash.getPublicKeyFromWif(wif);
+        let providedPublicKeyWithoutColon;
+        let computedPublicKeyWithoutColon;
+        if (providedPublicKey.split(":") > 1) {
+          [, providedPublicKeyWithoutColon] = providedPublicKey.split(":");
+        } else {
+          providedPublicKeyWithoutColon = providedPublicKey;
+        }
+        if (computedPublicKey.split(":") > 1) {
+          [, computedPublicKeyWithoutColon] = computedPublicKey.split(":");
+        } else {
+          computedPublicKeyWithoutColon = computedPublicKey;
+        }
+        if (providedPublicKeyWithoutColon !== computedPublicKeyWithoutColon) {
+          this.setState({ step: "mismatch" });
+        } else {
+          this.setState({
+            computedPrivateKey: wif,
+            step: "processed",
+          });
+        }
       } else if (currency === "ltc") {
         let wif = "";
-        if (mode === "pro") {
-          wif = await computeSoloPro({ s1pro, s2pro, currency });
-        } else {
-          wif = await Litcoin.getWifLTC(providedKey1, providedKey2);
-        }
+        wif = await Litcoin.getWifLTC(secret1, secret2);
 
         const computedPublicKey = Litcoin.getPublicKeyFromWif(wif);
 
@@ -175,16 +205,23 @@ class PrivateKeyScreen extends Component {
             step: "processed",
           });
         }
+      } else if (currency === "xtz") {
+        let wif = "";
+        wif = await Tezos.getWifXTZ(secret1, secret2);
+
+        const computedPublicKey = Tezos.getPublicKeyFromWif(wif);
+
+        if (providedPublicKey !== computedPublicKey) {
+          this.setState({ step: "mismatch" });
+        } else {
+          this.setState({
+            computedPrivateKey: wif,
+            step: "processed",
+          });
+        }
       } else {
         let computedPrivateKey = "";
-        if (mode === "pro") {
-          computedPrivateKey = await computeSoloPro({ s1pro, s2pro, currency });
-        } else {
-          computedPrivateKey = await Ethereum.getPrivateKey(
-            providedKey1,
-            providedKey2
-          );
-        }
+        computedPrivateKey = await Ethereum.getPrivateKey(secret1, secret2);
 
         const keysMatch = Ethereum.isPublicAddressDerivedFromPrivateKey(
           providedPublicKey,

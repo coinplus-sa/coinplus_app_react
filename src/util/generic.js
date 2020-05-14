@@ -2,6 +2,8 @@ import cryptojs from "crypto-js";
 import BN from "bn.js";
 import Bitcoin from "./bitcoin";
 import Litecoin from "./litecoin";
+import Tezos from "./tezos";
+import BitcoinCash from "./bitcoincash";
 import Ethereum from "./ethereum";
 import { combine } from "./shamir";
 
@@ -91,7 +93,7 @@ async function scryptProm(secrect) {
 }
 */
 
-function base58encode(valueArg, length) {
+export function base58encode(valueArg, length) {
   const b58chars = bitcoinB58chars;
   let result = "";
   let value = valueArg;
@@ -128,31 +130,44 @@ export const isValidAddress = (address, currency) => {
   if (currency === "eth") {
     return Ethereum.isValidPublicAddress(address);
   }
+  if (currency === "xtz") {
+    return Tezos.isValidPublicAddress(address);
+  }
+  if (currency === "bch") {
+    return BitcoinCash.isValidPublicAddress(address);
+  }
 
   return false;
 };
 
-export const computeSoloPro = async ({
-  s1pro,
-  s2pro,
-  currency = "btc",
-} = {}) => {
+export const computeSoloPro = async ({ s1pro, s2pro } = {}) => {
   const s28 = combine([s1pro.index, s1pro.s28], [s2pro.index, s2pro.s28], 28);
   const s14 = combine([s1pro.index, s1pro.s14], [s2pro.index, s2pro.s14], 14);
 
-  let privateKey = "";
-  if (currency === "btc") {
-    privateKey = await Bitcoin.getWifBTC(s28, s14);
-  } else if (currency === "ltc") {
-    privateKey = await Litecoin.getPrivateKey(s28, s14);
-  } else if (currency === "eth") {
-    privateKey = await Ethereum.getPrivateKey(s28, s14);
-  }
-
-  return privateKey;
+  return { secret1: s28, secret2: s14 };
 };
+
+export function base256decode(bytestr) {
+  let value = new BN(0);
+  let leedingZeros = 0;
+  let started = false;
+  let b;
+  if (bytestr.length > 0) {
+    for (b = 0; b < bytestr.length; b += 1) {
+      if (bytestr[b] === 0 && !started) {
+        leedingZeros += 1;
+      } else {
+        started = true;
+      }
+      value = value.mul(new BN(256)).add(new BN(bytestr[b]));
+    }
+  }
+  return { value, leedingZeros };
+}
 
 export default {
   isValidAddress,
   computeSoloPro,
+  base58encode,
+  base256decode,
 };

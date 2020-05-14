@@ -24,8 +24,8 @@ jest.mock("react-native-scrypt", () => ({
   },
 }));
 
-test("SOLO PRO BTC", async () => {
-  expect.assertions(1);
+test("SOLO PRO 1", async () => {
+  expect.assertions(2);
 
   const s1pro = {
     s14: "NvanZYpmZwnvra",
@@ -39,16 +39,17 @@ test("SOLO PRO BTC", async () => {
     index: 2,
   };
 
-  const expectedPrivateKey =
-    "L2xR49aiBRAsQvCA8Zuj39Ge7y5bwXFsPsGjEm14SuSB5NuMSTha";
+  const expectedSecret1 = "cLAv11uvZNRysuXUWptqPTEgiyyC";
+  const expectedSecret2 = "rvWAH8Uh9FVBRn";
 
-  const privateKey = await computeSoloPro({ s1pro, s2pro, currency: "btc" });
+  const { secret1, secret2 } = await computeSoloPro({ s1pro, s2pro });
 
-  expect(privateKey).toEqual(expectedPrivateKey);
+  expect(secret1).toEqual(expectedSecret1);
+  expect(secret2).toEqual(expectedSecret2);
 });
 
-test("SOLO PRO ETH", async () => {
-  expect.assertions(1);
+test("SOLO PRO 2", async () => {
+  expect.assertions(2);
 
   const s1pro = {
     s14: "zuu7Gq3Lkh7xXU",
@@ -62,10 +63,11 @@ test("SOLO PRO ETH", async () => {
     index: 2,
   };
 
-  const expectedPrivateKey =
-    "3aeba09074bf148f87f4aa69628698265877b4e929837d6fa59645dc7b05138b";
+  const expectedSecret1 = "PDEL939wcpoprkmh1pbsseAVp29k";
+  const expectedSecret2 = "NN2bwuyMndiJZw";
 
-  const privateKey = await computeSoloPro({ s1pro, s2pro, currency: "eth" });
+  const { secret1, secret2 } = await computeSoloPro({ s1pro, s2pro });
 
-  expect(privateKey).toEqual(expectedPrivateKey);
+  expect(secret1).toEqual(expectedSecret1);
+  expect(secret2).toEqual(expectedSecret2);
 });
