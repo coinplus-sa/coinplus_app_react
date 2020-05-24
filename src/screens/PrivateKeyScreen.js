@@ -19,7 +19,7 @@ import { connect } from "react-redux";
 
 import Bitcoin from "../util/bitcoin";
 import BitcoinCash from "../util/bitcoincash";
-import Litcoin from "../util/litecoin";
+import Litecoin from "../util/litecoin";
 import Tezos from "../util/tezos";
 import Ethereum from "../util/ethereum";
 import { computeSoloPro } from "../util/generic";
@@ -193,9 +193,9 @@ class PrivateKeyScreen extends Component {
         }
       } else if (currency === "ltc") {
         let wif = "";
-        wif = await Litcoin.getWifLTC(secret1, secret2);
+        wif = await Litecoin.getWifLTC(secret1, secret2);
 
-        const computedPublicKey = Litcoin.getPublicKeyFromWif(wif);
+        const computedPublicKey = Litecoin.getPublicKeyFromWif(wif);
 
         if (providedPublicKey !== computedPublicKey) {
           this.setState({ step: "mismatch" });
@@ -206,16 +206,18 @@ class PrivateKeyScreen extends Component {
           });
         }
       } else if (currency === "xtz") {
-        let wif = "";
-        wif = await Tezos.getWifXTZ(secret1, secret2);
+        const { bitcoin: bitcoinTz, tezos: tezosTz } = await Tezos.getWifXTZ(
+          secret1,
+          secret2
+        );
 
-        const computedPublicKey = Tezos.getPublicKeyFromWif(wif);
+        const computedPublicKey = Tezos.getPublicKeyFromWif(bitcoinTz);
 
         if (providedPublicKey !== computedPublicKey) {
           this.setState({ step: "mismatch" });
         } else {
           this.setState({
-            computedPrivateKey: wif,
+            computedPrivateKey: tezosTz,
             step: "processed",
           });
         }

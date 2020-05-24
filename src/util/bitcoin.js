@@ -63,9 +63,23 @@ const isValidPublicAddress = address => {
   }
 };
 
+const getBalance = address => {
+  return fetch(
+    `https://api.blockcypher.com/v1/btc/main/addrs/${address}/balance`
+  ).then(function(response) {
+    return response.json()}
+  ).then(function(result) {
+    return {
+      finalBalance: result.final_balance * 0.00000001,
+      unconfirmedBalance: result.unconfirmed_balance * 0.00000001,
+    };
+  });
+};
+
 export default {
   getWif,
   getWifBTC,
   getPublicKeyFromWif,
   isValidPublicAddress,
+  getBalance,
 };

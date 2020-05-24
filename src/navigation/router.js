@@ -8,6 +8,9 @@ import CardFrontInputScreen from "../screens/CardFrontInputScreen";
 import CardBackInputScreen from "../screens/CardBackInputScreen";
 import PrivateKeyScreen from "../screens/PrivateKeyScreen";
 import QRScanScreen from "../screens/QRScanScreen";
+import TransactionResultScreen from "../screens/TransactionResultScreen";
+import BalanceScreen from "../screens/BalanceScreen";
+import TransactionScreen from "../screens/TransactionScreen";
 
 import logo from "../assets/coinplus_logo.png";
 
@@ -44,6 +47,15 @@ export default createAppContainer(
       },
       PrivateKey: {
         screen: PrivateKeyScreen,
+      },
+      Transaction: {
+        screen: TransactionScreen,
+      },
+      TransactionResult: {
+        screen: TransactionResultScreen,
+      },
+      Balance: {
+        screen: BalanceScreen,
       },
       QRScan: {
         screen: QRScanScreen,

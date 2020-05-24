@@ -101,7 +101,7 @@ android {
         applicationId "com.coinplus.mobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 25
+        versionCode 26
         versionName "1.1.3"
         ndk {
             abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"

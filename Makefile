@@ -8,7 +8,7 @@ run_test:
 	docker exec -it android_build /bin/bash -c '. /root/.nvm/nvm.sh && cd /coinplus_app_react/ && npm test'
 
 run:
-	docker run --rm -i -t  --name android_build android_build
+	docker run --rm -i -t  --privileged -v /dev/bus/usb:/dev/bus/usb  --name android_build android_build
   
 
 cbr: clean br

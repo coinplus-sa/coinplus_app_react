@@ -17,7 +17,7 @@ const getPublicKeyFromWif = wif => {
   const ck = CoinKey.fromWif(wif);
   const pbuf = new Uint8Array(23);
   const addressB256 = new Uint8Array(27);
-  const puKeyHash = blake2.blake2b(new Uint8Array(ck.publicKey), "", 20);
+  const puKeyHash = blake2.blake2b(ck.publicKey, "", 20);
   pbuf.set([6, 161, 161], 0);
   pbuf.set(puKeyHash, 3);
   const sha2 = crypto
@@ -58,8 +58,23 @@ const isValidPublicAddress = address => {
     return false;
   }
 };
+
+const getBalance = address => {
+  return fetch(
+    `https://api.tzkt.io/v1/accounts/${address}`
+  ).then(function(response) {
+    console.log(response)
+    return response.json()}
+  ).then(function(result) {
+    console.log(result)
+    return {finalBalance: result.balance *0.000001,
+            unconfirmedBalance: 0} ;
+  });
+};
+
 export default {
   getWifXTZ,
+  getBalance,
   getPublicKeyFromWif,
   isValidPublicAddress,
 };

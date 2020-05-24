@@ -26,6 +26,7 @@ const initialState = {
   proDeviceId: "", // "" | "1" | "2" | "3"
   // Currency
   currency: "btc", // "btc" | "eth"
+  balance: 0,
   // Mode
   mode: "simple", // "simple" | "pro"
 };

@@ -6,6 +6,7 @@
     "clean": "jest --clearCache",
     "jest": "jest",
     "lint": "eslint .",
+    "lintfix": "eslint . --fix",
     "postinstall": "rn-nodeify --install assert,buffer,crypto,events,process,stream,vm --hack",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "npm run lint && npm run jest"
@@ -22,7 +23,7 @@
     "events": "^1.1.1",
     "js-sha256": "0.9.0",
     "lodash": "4.17.11",
-    "crypto-js":  "^3.1.4",
+    "crypto-js": "^3.1.4",
     "native-base": "2.11.0",
     "process": "^0.11.10",
     "prop-types": "15.6.2",
@@ -45,7 +46,8 @@
     "stream-browserify": "^1.0.0",
     "vm-browserify": "0.0.4",
     "bchaddrjs": "0.4.8",
-    "blakejs": "1.1.0"
+    "blakejs": "1.1.0",
+    "bitcoinjs-lib": "5.1.7"
   },
   "devDependencies": {
     "@babel/core": "7.2.2",

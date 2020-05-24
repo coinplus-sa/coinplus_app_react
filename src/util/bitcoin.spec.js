@@ -101,3 +101,15 @@ generateTest(
   "L2eFh6gDsQEStWY9PjvKNnGEyTwKirQ3mHKh6HXLeieNFpWwFrFa",
   "1JWhC25CxDpThSqSbiaxZcCuSD3W1kBUeU"
 );
+generateTest(
+  "BNH9SkRaGhP6dxuccW9ir6WGafKjL9",
+  "SY5xX71BApU4xuxYcZ38AbJgqgV4DA",
+  "cVn9yuLB8PqtG7Poerz9bAQicSi61tFw94NnFEUvLNABcfXskss6",
+  "msychtr6RkAhkPEZjitzcvG2u84TLL9vXk"
+);
+generateTest(
+  "SEcGd4KY2fTyyHiy2CMBPCmYaWTZLU",
+  "nC89ABD7Q4ymp842FCH4AutT7XGUo2",
+  "cPC6wZSgCWFQf7UmtsiFyHsYTj2TNDMSG5zYsw9UtZ3XuqdeNDCZ",
+  "mrzH3vuUspsAYAc8gFvaPddmcGmZKtRYQQ"
+);

@@ -24,9 +24,26 @@ const isPublicAddressDerivedFromPrivateKey = (publicAddress, privateKey) => {
 
 const isValidPublicAddress = address => util.isValidChecksumAddress(address);
 
+const getBalance = address => {
+  return fetch(
+    `https://api.blockcypher.com/v1/eth/main/addrs/${address}/balance`
+  ).then(function(response) {
+    console.log(response)
+    return response.json()}
+  ).then(function(result) {
+    console.log(result)
+    return {
+      finalBalance: result.final_balance * 0.000000000000000001,
+      unconfirmedBalance: result.unconfirmed_balance * 0.000000000000000001,
+    };
+  });
+};
+
+
 export default {
   getPrivateKey,
   getAddressKey,
+  getBalance,
   isValidPublicAddress,
   isPublicAddressDerivedFromPrivateKey,
 };

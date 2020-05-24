@@ -224,7 +224,7 @@ class CardFrontInputScreen extends Component {
                 ]}
               >
                 <Input
-                  placeholder="Public key"
+                  placeholder="Address"
                   onChangeText={updatePublicKey}
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -244,6 +244,19 @@ class CardFrontInputScreen extends Component {
           </View>
         </Content>
         <Footer style={styles.transparentBackground}>
+          <FooterTab>
+            <Button
+              primary
+              full
+              disabled={!isValid}
+              onPress={() => {
+                Keyboard.dismiss();
+                navigation.navigate("Balance");
+              }}
+            >
+              <Text style={styles.colorWhite}>Balance</Text>
+            </Button>
+          </FooterTab>
           <FooterTab>
             <Button
               primary

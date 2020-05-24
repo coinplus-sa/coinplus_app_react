@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
   },
+  
   buttonLabel: {
     padding: 8,
     color: "#2c363f",
