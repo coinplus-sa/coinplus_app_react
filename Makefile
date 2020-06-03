@@ -3,6 +3,8 @@ d := $(shell docker ps -a -q)
 
 build:
 	docker build -f docker/android/Dockerfile -t android_build .
+buildnocache:
+	docker build -f docker/android/Dockerfile -t android_build --no-cache .
 
 run_test:
 	docker exec -it android_build /bin/bash -c '. /root/.nvm/nvm.sh && cd /coinplus_app_react/ && npm test'
