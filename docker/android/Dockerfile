@@ -27,5 +27,6 @@ run . /root/.nvm/nvm.sh && node node_modules/rn-nodeify/cmd.js  --install assert
 run true
 workdir /coinplus_app_react/android
 #run . /root/.nvm/nvm.sh && export ANDROID_HOME=/android-studio/  && ./gradlew  assembleRelease
+run . /root/.nvm/nvm.sh && npm install -g react-native-cli
 
 cmd bash

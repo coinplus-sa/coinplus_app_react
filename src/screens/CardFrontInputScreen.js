@@ -236,7 +236,7 @@ class CardFrontInputScreen extends Component {
                   name="md-qr-scanner"
                   onPress={() => {
                     Keyboard.dismiss();
-                    navigation.navigate("QRScan");
+                    navigation.navigate("QRScan", { qrtype: "card" });
                   }}
                 />
               </Item>

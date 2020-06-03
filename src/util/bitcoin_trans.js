@@ -1,8 +1,9 @@
-import request from "request";
-import bitcoin from "bitcoinjs-lib";
+import Decimal from "decimal.js";
+import { bitcoinExp } from "./bitcoin";
 
-const bitcoinNetwork = bitcoin.networks.testnet;
+const bitcoin = require("bitcoinjs-lib");
 
+const bitcoinNetwork = bitcoin.networks.bitcoin;
 /**
  * Send bitcoin in testnet using BlockCypher
  * @param {number} amount - Bitcoin amount in BTC
@@ -10,79 +11,122 @@ const bitcoinNetwork = bitcoin.networks.testnet;
  * @param {string} from - input Bitcoin wallet address
  * @param {string} wif
  */
-const sendBitcoin = function(amount, to, from, wif) {
-  const keys = bitcoin.ECPair.fromWIF(wif, bitcoinNetwork);
-  console.log(keys);
-  return new Promise(function(resolve, reject) {
-    // create tx skeleton
-    request.post(
-      {
-        url: "https://api.blockcypher.com/v1/btc/test3/txs/new",
-        body: JSON.stringify({
-          inputs: [{ addresses: [from] }],
-          // convert amount from BTC to Satoshis
-          fees: 4000,
-          outputs: [{ addresses: [to], value: amount * Math.pow(10, 8) }],
-        }),
-      },
-      function(err, res, body) {
-        if (err) {
-          reject(err);
-        } else {
-          const tmptx = JSON.parse(body);
-          console.log(tmptx);
-          // signing each of the hex-encoded string required to finalize the transaction
-          tmptx.pubkeys = [];
-          tmptx.signatures = tmptx.tosign.map(function(tosign, n) {
-            tmptx.pubkeys.push(keys.publicKey.toString("hex"));
-            console.log("pk", keys.publicKey);
-            console.log("sk", keys.__D);
-            const buftosign = new Buffer.from(tosign, "hex");
-            console.log(buftosign);
-            const sig = keys.sign(buftosign);
-            console.log("sig", sig);
-            const encodedSignature = bitcoin.script.signature.encode(
-              sig,
-              bitcoin.Transaction.SIGHASH_ALL
-            );
-            const hexStr = encodedSignature.toString("hex").slice(0, -2);
-            return hexStr;
-          });
-          console.log(tmptx);
-          // sending back the transaction with all the signatures to broadcast
-          request.post(
-            {
-              url: "https://api.blockcypher.com/v1/btc/test3/txs/send",
-              body: JSON.stringify(tmptx),
-            },
-            function(err, res, body) {
-              console.log(body, res.body);
-              if (err) {
-                reject(err);
-              } else {
-                // return tx hash as feedback
-                const finaltx = JSON.parse(body);
-                resolve(finaltx.tx.hash);
-              }
-            }
-          );
-        }
-      }
-    );
-  });
-};
-// Our private key and address
-const wif = "cVn9yuLB8PqtG7Poerz9bAQicSi61tFw94NnFEUvLNABcfXskss6";
-// Address we are sending Bitcoin to
-const addressTo = "mrzH3vuUspsAYAc8gFvaPddmcGmZKtRYQQ";
-const addressFrom = "msychtr6RkAhkPEZjitzcvG2u84TLL9vXk";
-// Start the creating our transaction
-const amount = 50000; // Sending amount must be in satoshis
-const fee = 50000; // Fee is in satoshis
-sendBitcoin(0.001, addressTo, addressFrom, wif)
-  .then(res => {
-    console.log(res);
+
+const API_TXS_CREATE = "https://api.blockcypher.com/v1/btc/main/txs/new";
+const API_TXS_SEND = "https://api.blockcypher.com/v1/btc/main/txs/send";
+const getFees = from => {
+  return fetch(API_TXS_CREATE, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      inputs: [{ addresses: [from] }],
+      outputs: [{ addresses: [from], value: 0 }],
+    }),
   })
-  .catch(res => {
-    console.log(res);
-  });
+    .then(response => {
+      return response.text();
+    })
+    .then(restext => {
+      let res;
+      console.log(restext);
+      try {
+        res = JSON.parse(restext);
+        if (res.error) {
+          throw res.error;
+        }
+      } catch {
+        throw { errormsg: `malformed json answer from the server:${res}` };
+      }
+      return Decimal(res.tx.fees)
+        .div(bitcoinExp)
+        .toString();
+    });
+};
+
+const sendBitcoin = (amount, to, from, wif, fee) => {
+  const keys = bitcoin.ECPair.fromWIF(wif, bitcoinNetwork);
+  return fetch(API_TXS_CREATE, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      inputs: [{ addresses: [from] }],
+      // convert amount from BTC to Satoshis
+      fees: Decimal(fee)
+        .mul(bitcoinExp).floor()
+        .toNumber(),
+      outputs: [
+        {
+          addresses: [to],
+          value: Decimal(amount)
+            .mul(bitcoinExp).floor()
+            .toNumber(),
+        },
+      ],
+    }),
+  })
+    .then(response => {
+      return response.text();
+    })
+    .then(res => {
+      let tmptx;
+      console.log(res);
+      try {
+        tmptx = JSON.parse(res);
+        if (tmptx.errors) {
+          throw tmptx.errors;
+        }
+      } catch {
+        throw { errormsg: `malformed json answer from the server:${res}` };
+      }
+      // signing each of the hex-encoded string required to finalize the transaction
+      tmptx.pubkeys = [];
+      tmptx.signatures = tmptx.tosign.map(function(tosign) {
+        tmptx.pubkeys.push(keys.publicKey.toString("hex"));
+        const buftosign = Buffer.from(tosign, "hex");
+        const sig = keys.sign(buftosign);
+        const encodedSignature = bitcoin.script.signature.encode(
+          sig,
+          bitcoin.Transaction.SIGHASH_ALL
+        );
+        const hexStr = encodedSignature.toString("hex").slice(0, -2);
+        return hexStr;
+      });
+      return fetch(API_TXS_SEND, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(tmptx),
+      });
+    })
+
+    .then(response => {
+      return response.text();
+    })
+    .then(res => {
+      let finaltx;
+      console.log(res);
+
+      try {
+        finaltx = JSON.parse(res);
+        console.log(res);
+        if (finaltx.errors) {
+          throw finaltx.errors;
+        }
+      } catch {
+        throw { errormsg: `malformed json answer from the server:${res}` };
+      }
+      return finaltx.tx.hash;
+    });
+};
+
+export default {
+  getFees,
+  sendBitcoin,
+};

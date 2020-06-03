@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
   },
-  
+
   buttonLabel: {
     padding: 8,
     color: "#2c363f",
@@ -169,8 +169,8 @@ export default connect(
     updateCurrency: currency => {
       dispatch(updateCurrencyAction(currency));
     },
-    updateMode: currency => {
-      dispatch(updateModeAction(currency));
+    updateMode: mode => {
+      dispatch(updateModeAction(mode));
     },
   })
 )(SelectionScreen);

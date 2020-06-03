@@ -2,7 +2,7 @@ import { sha256 } from "js-sha256";
 import { Buffer } from "safe-buffer";
 import bs58 from "bs58";
 import CoinKey from "coinkey";
-
+import Decimal from "decimal.js";
 import computePrivateKeySec256k1 from "./computePrivateKeySec256k1";
 
 const getWif = async (secret1B58, secret2B58) => {
@@ -63,17 +63,29 @@ const isValidPublicAddress = address => {
   }
 };
 
+export const bitcoinExp = Decimal(10 ** 8);
+export const historyURL = "https://live.blockcypher.com/btc/address/";
 const getBalance = address => {
+  console.log(
+    `https://api.blockcypher.com/v1/btc/main/addrs/${address}/balance`
+  );
   return fetch(
     `https://api.blockcypher.com/v1/btc/main/addrs/${address}/balance`
-  ).then(function(response) {
-    return response.json()}
-  ).then(function(result) {
-    return {
-      finalBalance: result.final_balance * 0.00000001,
-      unconfirmedBalance: result.unconfirmed_balance * 0.00000001,
-    };
-  });
+  )
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(result) {
+      console.log(result);
+      return {
+        finalBalance: Decimal(result.final_balance)
+          .div(bitcoinExp)
+          .toString(),
+        unconfirmedBalance: Decimal(result.unconfirmed_balance)
+          .div(bitcoinExp)
+          .toString(),
+      };
+    });
 };
 
 export default {
@@ -82,4 +94,5 @@ export default {
   getPublicKeyFromWif,
   isValidPublicAddress,
   getBalance,
+  historyURL,
 };

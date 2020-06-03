@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Linking } from "react-native";
 
 import { Container, Content, Text, H3, Spinner } from "native-base";
 import { connect } from "react-redux";
@@ -26,58 +26,11 @@ const styles = StyleSheet.create({
     color: "#1565c0",
     marginBottom: 32,
   },
-  mainView: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingBottom: 40,
-  },
-  button: {
-    alignSelf: "center",
-    justifyContent: "center",
-    borderRadius: 40,
-    height: 80,
-    width: 80,
-  },
-  touchable: {
-    backgroundColor: "#fff",
-    marginTop: 8,
-    padding: 16,
-  },
-  colorPrimary: {
-    color: "#1565c0",
-  },
-  colorSecondary: {
-    color: "#d81e5b",
-  },
-  iconSize: {
-    fontSize: 48,
-  },
   centerText: {
     textAlign: "center",
   },
-  bold: {
-    fontWeight: "bold",
-  },
-  button: {
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  buttonLabel: {
-    padding: 8,
-    color: "#2c363f",
-  },
-  mt48: {
-    marginTop: 48,
-  },
-  mt8: {
-    marginTop: 8,
-  },
   mt16: {
     marginTop: 16,
-  },
-  mt32: {
-    marginTop: 32,
   },
 });
 
@@ -146,17 +99,28 @@ class BalanceScreen extends Component {
     const { providedPublicKey, currency } = this.props;
     const { balanceAmount, balanceAmountUnconfirmed, step } = this.state;
 
-    const buttonImageHeight = 80;
-    const buttonGutter = 48;
+    let historyURL;
+    if (currency === "btc") {
+      historyURL = Bitcoin.historyURL + providedPublicKey;
+    }
+    if (currency === "ltc") {
+      historyURL = Litecoin.historyURL + providedPublicKey;
+    }
+    if (currency === "bch") {
+      historyURL = BitcoinCash.historyURL + providedPublicKey;
+    }
+    if (currency === "xtz") {
+      historyURL = Tezos.historyURL + providedPublicKey;
+    }
+    if (currency === "eth") {
+      historyURL = Ethereum.historyURL + providedPublicKey;
+    }
 
     return (
       <Container>
-        <Content
-          padder
-          contentContainerStyle={{ flexGrow: 1 }}
-        >
+        <Content padder contentContainerStyle={{ flexGrow: 1 }}>
           <H3 style={[styles.title]}>Address</H3>
-          <Text style={[styles.publicKey]} >{providedPublicKey}</Text>
+          <Text style={[styles.publicKey]}>{providedPublicKey}</Text>
           <H3 style={[styles.title]}>Balance Available</H3>
           {step === "fetching" ? (
             <View>
@@ -168,13 +132,22 @@ class BalanceScreen extends Component {
               </Text>
             </View>
           ) : (
-            <Text style={[styles.currencyView]}>
-              {balanceAmount}{" "}
-              {balanceAmountUnconfirmed !== 0 && (
-                <Text>({balanceAmountUnconfirmed} unconfirmed) </Text>
-              )}{" "}
-              {currency.toUpperCase()}
-            </Text>
+            <View>
+              <Text style={[styles.currencyView]}>
+                {balanceAmount}{" "}
+                {balanceAmountUnconfirmed !== 0 && (
+                  <Text>({balanceAmountUnconfirmed} unconfirmed) </Text>
+                )}{" "}
+                {currency.toUpperCase()}
+              </Text>
+              <H3 style={[styles.title]}>History</H3>
+              <Text
+                style={[styles.currencyView, { color: "blue" }]}
+                onPress={() => Linking.openURL(historyURL)}
+              >
+                Check History
+              </Text>
+            </View>
           )}
         </Content>
       </Container>

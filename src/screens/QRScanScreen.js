@@ -3,7 +3,10 @@ import { StyleSheet } from "react-native";
 import { Container, Content } from "native-base";
 import QRCodeScanner from "react-native-qrcode-scanner";
 import { connect } from "react-redux";
-import { updatePublicKeyAction } from "../redux/reducers/inputs";
+import {
+  updatePublicKeyAction,
+  updateDestinationAddressAction,
+} from "../redux/reducers/inputs";
 
 import parseScannedCode from "../util/scannedCodeParser";
 
@@ -24,10 +27,19 @@ class QRScanScreen extends Component {
   }
 
   onSuccess(e) {
-    const { navigation, updatePublicKey } = this.props;
+    const {
+      navigation,
+      updatePublicKey,
+      updateDestinationAddress,
+    } = this.props;
+    const { qrtype } = navigation.state.params;
     try {
       const publicKey = parseScannedCode(e.data);
-      updatePublicKey(publicKey);
+      if (qrtype === "card") {
+        updatePublicKey(publicKey);
+      } else if (qrtype === "destination") {
+        updateDestinationAddress(publicKey);
+      }
     } finally {
       navigation.goBack();
     }
@@ -58,6 +70,9 @@ export default connect(
   dispatch => ({
     updatePublicKey: key => {
       dispatch(updatePublicKeyAction(key));
+    },
+    updateDestinationAddress: key => {
+      dispatch(updateDestinationAddressAction(key));
     },
   })
 )(QRScanScreen);

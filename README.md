@@ -77,6 +77,18 @@ rm -rf ios/build/
 react-native run-ios
 ```
 
+### Docker
+
+build:
+    docker build -f docker/android/Dockerfile -t android_build .
+
+run
+    docker run --rm -i -t  --privileged -v /dev/bus/usb:/dev/bus/usb  --name android_build android_build
+
+run android in docker
+    docker exec -it android_build /bin/bash
+    react-native run-android
+
 ## Release
 
 ### Android

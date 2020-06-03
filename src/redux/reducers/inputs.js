@@ -12,7 +12,10 @@ export const RESET_DEVICE_ID = "RESET_DEVICE_ID";
 export const RESET_PRO_DEVICE_ID = "RESET_PRO_DEVICE_IDS";
 export const UPDATE_CURRENCY = "UPDATE_CURRENCY";
 export const UPDATE_MODE = "UPDATE_MODE";
-
+export const UPDATE_PRIVATE_KEY = "UPDATE_PRIVATE_KEY";
+export const UPDATE_DESTINATION_ADDRESS = "UPDATE_DESTINATION_ADDRESS";
+export const UPDATE_FEE = "UPDATE_FEE";
+export const UPDATE_SEND_AMOUNT = "UPDATE_SEND_AMOUNT";
 const initialState = {
   // Public key doesn't depend on the mode (simple/pro)
   publicKey: "",
@@ -27,8 +30,12 @@ const initialState = {
   // Currency
   currency: "btc", // "btc" | "eth"
   balance: 0,
+  computedPrivateKey: "",
   // Mode
-  mode: "simple", // "simple" | "pro"
+  mode: "simple", // "simple" | "pro",
+  destinationAddress: "",
+  fee: "",
+  sendAmount: "",
 };
 
 /*
@@ -70,6 +77,18 @@ export default function reducer(state = initialState, action) {
       return Object.assign({}, state, { currency: action.currency });
     case UPDATE_MODE:
       return Object.assign({}, state, { mode: action.mode });
+    case UPDATE_PRIVATE_KEY:
+      return Object.assign({}, state, {
+        computedPrivateKey: action.computedPrivateKey,
+      });
+    case UPDATE_DESTINATION_ADDRESS:
+      return Object.assign({}, state, {
+        destinationAddress: action.destinationAddress,
+      });
+    case UPDATE_FEE:
+      return Object.assign({}, state, { fee: action.fee });
+    case UPDATE_SEND_AMOUNT:
+      return Object.assign({}, state, { sendAmount: action.sendAmount });
     default:
       return state;
   }
@@ -82,6 +101,34 @@ export function updateKey1Action(key1) {
   return {
     type: UPDATE_KEY_1,
     key1,
+  };
+}
+
+export function updateComputedPrivateKeyAction(computedPrivateKey) {
+  return {
+    type: UPDATE_PRIVATE_KEY,
+    computedPrivateKey,
+  };
+}
+
+export function updateDestinationAddressAction(destinationAddress) {
+  return {
+    type: UPDATE_DESTINATION_ADDRESS,
+    destinationAddress,
+  };
+}
+
+export function updateFeeAction(fee) {
+  console.log(`updateFeeAction ${fee}`);
+  return {
+    type: UPDATE_FEE,
+    fee,
+  };
+}
+export function updateSendAmountAction(sendAmount) {
+  return {
+    type: UPDATE_SEND_AMOUNT,
+    sendAmount,
   };
 }
 

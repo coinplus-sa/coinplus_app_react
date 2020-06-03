@@ -60,21 +60,22 @@ const isValidPublicAddress = address => {
 };
 
 const getBalance = address => {
-  return fetch(
-    `https://api.tzkt.io/v1/accounts/${address}`
-  ).then(function(response) {
-    console.log(response)
-    return response.json()}
-  ).then(function(result) {
-    console.log(result)
-    return {finalBalance: result.balance *0.000001,
-            unconfirmedBalance: 0} ;
-  });
+  return fetch(`https://api.tzkt.io/v1/accounts/${address}`)
+    .then(function(response) {
+      console.log(response);
+      return response.json();
+    })
+    .then(function(result) {
+      console.log(result);
+      return { finalBalance: result.balance * 0.000001, unconfirmedBalance: 0 };
+    });
 };
+export const historyURL = "https://tzkt.io/";
 
 export default {
   getWifXTZ,
   getBalance,
   getPublicKeyFromWif,
   isValidPublicAddress,
+  historyURL,
 };

@@ -14,6 +14,8 @@ import {
   Icon,
   H3,
   Spinner,
+  Footer,
+  FooterTab,
 } from "native-base";
 import { connect } from "react-redux";
 
@@ -23,6 +25,8 @@ import Litecoin from "../util/litecoin";
 import Tezos from "../util/tezos";
 import Ethereum from "../util/ethereum";
 import { computeSoloPro } from "../util/generic";
+
+import { updateComputedPrivateKeyAction } from "../redux/reducers/inputs";
 
 const styles = StyleSheet.create({
   publicKey: {
@@ -80,7 +84,6 @@ class PrivateKeyScreen extends Component {
     super(props);
 
     this.state = {
-      computedPrivateKey: "",
       step: "unprocessed",
     };
 
@@ -108,14 +111,14 @@ class PrivateKeyScreen extends Component {
   }
 
   copyToClipboard() {
-    const { computedPrivateKey } = this.state;
+    const { computedPrivateKey } = this.props;
     Clipboard.setString(computedPrivateKey);
   }
 
   computePrivateKey() {
     const { step } = this.state;
     if (step === "processed") return;
-
+    console.log("start")
     InteractionManager.runAfterInteractions(async () => {
       const {
         providedKey1,
@@ -127,6 +130,7 @@ class PrivateKeyScreen extends Component {
         providedPublicKey,
         currency,
         mode,
+        updateComputedPrivateKey,
       } = this.props;
 
       const s1pro = {
@@ -153,16 +157,18 @@ class PrivateKeyScreen extends Component {
         secret2 = providedKey2;
       }
 
+      let computedPrivateKey = "";
       if (currency === "btc") {
         let wif = "";
         wif = await Bitcoin.getWifBTC(secret1, secret2);
         const computedPublicKey = Bitcoin.getPublicKeyFromWif(wif);
-
+        console.log("wif", wif)
+    
         if (providedPublicKey !== computedPublicKey) {
           this.setState({ step: "mismatch" });
         } else {
+          computedPrivateKey = wif;
           this.setState({
-            computedPrivateKey: wif,
             step: "processed",
           });
         }
@@ -186,8 +192,8 @@ class PrivateKeyScreen extends Component {
         if (providedPublicKeyWithoutColon !== computedPublicKeyWithoutColon) {
           this.setState({ step: "mismatch" });
         } else {
+          computedPrivateKey = wif;
           this.setState({
-            computedPrivateKey: wif,
             step: "processed",
           });
         }
@@ -200,8 +206,8 @@ class PrivateKeyScreen extends Component {
         if (providedPublicKey !== computedPublicKey) {
           this.setState({ step: "mismatch" });
         } else {
+          computedPrivateKey = wif;
           this.setState({
-            computedPrivateKey: wif,
             step: "processed",
           });
         }
@@ -216,13 +222,12 @@ class PrivateKeyScreen extends Component {
         if (providedPublicKey !== computedPublicKey) {
           this.setState({ step: "mismatch" });
         } else {
+          computedPrivateKey = tezosTz;
           this.setState({
-            computedPrivateKey: tezosTz,
             step: "processed",
           });
         }
       } else {
-        let computedPrivateKey = "";
         computedPrivateKey = await Ethereum.getPrivateKey(secret1, secret2);
 
         const keysMatch = Ethereum.isPublicAddressDerivedFromPrivateKey(
@@ -234,17 +239,18 @@ class PrivateKeyScreen extends Component {
           this.setState({ step: "mismatch" });
         } else {
           this.setState({
-            computedPrivateKey,
             step: "processed",
           });
         }
       }
+      console.log("computePrivateKey ", computedPrivateKey);
+      updateComputedPrivateKey(computedPrivateKey);
     });
   }
 
   render() {
-    const { providedPublicKey, navigation } = this.props;
-    const { computedPrivateKey, step } = this.state;
+    const { providedPublicKey, navigation, computedPrivateKey } = this.props;
+    const { step } = this.state;
 
     return (
       <Container>
@@ -365,19 +371,42 @@ class PrivateKeyScreen extends Component {
             </View>
           </Content>
         )}
+        {step === "processed" && currency === "btc" && (
+          <Footer style={styles.transparentBackground}>
+            <FooterTab>
+              <Button
+                primary
+                full
+                onPress={() => {
+                  navigation.navigate("Transaction");
+                }}
+              >
+                <Text style={styles.colorWhite}>Create Transaction</Text>
+              </Button>
+            </FooterTab>
+          </Footer>
+        )}
       </Container>
     );
   }
 }
 
-export default connect(state => ({
-  providedKey1: state.inputs.key1,
-  providedKey2: state.inputs.key2,
-  providedDeviceId: state.inputs.deviceId,
-  providedProKey1: state.inputs.proKey1,
-  providedProKey2: state.inputs.proKey2,
-  providedProDeviceId: state.inputs.proDeviceId,
-  providedPublicKey: state.inputs.publicKey,
-  currency: state.inputs.currency,
-  mode: state.inputs.mode,
-}))(PrivateKeyScreen);
+export default connect(
+  state => ({
+    providedKey1: state.inputs.key1,
+    providedKey2: state.inputs.key2,
+    providedDeviceId: state.inputs.deviceId,
+    providedProKey1: state.inputs.proKey1,
+    providedProKey2: state.inputs.proKey2,
+    providedProDeviceId: state.inputs.proDeviceId,
+    providedPublicKey: state.inputs.publicKey,
+    computedPrivateKey: state.inputs.computedPrivateKey,
+    currency: state.inputs.currency,
+    mode: state.inputs.mode,
+  }),
+  dispatch => ({
+    updateComputedPrivateKey: computedPrivateKey => {
+      dispatch(updateComputedPrivateKeyAction(computedPrivateKey));
+    },
+  })
+)(PrivateKeyScreen);
