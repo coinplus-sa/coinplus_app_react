@@ -43,17 +43,17 @@ const getBalance = address => {
   return fetch(
     `https://api.blockcypher.com/v1/ltc/main/addrs/${address}/balance`
   )
-    .then(function(response) {
+    .then(response => {
       return response.json();
     })
-    .then(function(result) {
+    .then(result => {
       return {
         finalBalance: result.final_balance * 0.00000001,
         unconfirmedBalance: result.unconfirmed_balance * 0.00000001,
       };
     });
 };
-export const historyURL = "https://live.blockcypher.com/ltc/address/";
+const historyURL = "https://live.blockcypher.com/ltc/address/";
 
 export default {
   getWifLTC,

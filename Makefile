@@ -32,12 +32,19 @@ update:
 	docker cp src android_build:/coinplus_app_react/
 	docker cp android android_build:/coinplus_app_react/
 	docker cp package.json android_build:/coinplus_app_react/
+	docker cp shim.js android_build:/coinplus_app_react/
 
 getbuild:
 	docker cp android_build:/coinplus_app_react/android/app/build/outputs/apk/release/app-release.apk app-release.apk
   
 assemble:
 	docker exec -it android_build /bin/bash -c 'export ANDROID_HOME=/android-studio/ && cd /coinplus_app_react/android  && ./gradlew  assembleRelease'
+
+  
+run-android:
+	docker exec -it android_build /bin/bash -c '. /root/.nvm/nvm.sh && export ANDROID_HOME=/android-studio/ && cd /coinplus_app_react && react-native run-android'
+log-android:
+	docker exec -it android_build /bin/bash -c '. /root/.nvm/nvm.sh && export ANDROID_HOME=/android-studio/ && cd /coinplus_app_react && react-native log-android'
 
 
 clean:

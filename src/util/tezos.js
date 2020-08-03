@@ -5,6 +5,9 @@ import CoinKey from "coinkey";
 import blake2 from "blakejs";
 import crypto from "crypto";
 import { base58encode, base256decode } from "./generic";
+import Decimal from "decimal.js";
+
+export const tezosExp = Decimal(10 ** 6);
 
 import Bitcoin from "./bitcoin";
 
@@ -59,18 +62,22 @@ const isValidPublicAddress = address => {
   }
 };
 
+
+
 const getBalance = address => {
   return fetch(`https://api.tzkt.io/v1/accounts/${address}`)
-    .then(function(response) {
-      console.log(response);
+    .then(response => {
       return response.json();
     })
-    .then(function(result) {
-      console.log(result);
-      return { finalBalance: result.balance * 0.000001, unconfirmedBalance: 0 };
+    .then(result => {
+      console.log(result)
+      if (result.type === "empty"){
+        return { finalBalance: "0", unconfirmedBalance: "0" };
+      }
+      return { finalBalance: Decimal(result.balance).div(tezosExp).toString(), unconfirmedBalance: "0" };
     });
 };
-export const historyURL = "https://tzkt.io/";
+const historyURL = "https://tzkt.io/";
 
 export default {
   getWifXTZ,

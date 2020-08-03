@@ -5,6 +5,8 @@ import CoinKey from "coinkey";
 import Decimal from "decimal.js";
 import computePrivateKeySec256k1 from "./computePrivateKeySec256k1";
 
+export const bitcoinExp = Decimal(10 ** 8);
+
 const getWif = async (secret1B58, secret2B58) => {
   const privkeyB256 = await computePrivateKeySec256k1(secret1B58, secret2B58);
   const formats = {
@@ -63,20 +65,15 @@ const isValidPublicAddress = address => {
   }
 };
 
-export const bitcoinExp = Decimal(10 ** 8);
-export const historyURL = "https://live.blockcypher.com/btc/address/";
+const historyURL = "https://live.blockcypher.com/btc/address/";
 const getBalance = address => {
-  console.log(
-    `https://api.blockcypher.com/v1/btc/main/addrs/${address}/balance`
-  );
   return fetch(
     `https://api.blockcypher.com/v1/btc/main/addrs/${address}/balance`
   )
-    .then(function(response) {
+    .then(response => {
       return response.json();
     })
-    .then(function(result) {
-      console.log(result);
+    .then(result => {
       return {
         finalBalance: Decimal(result.final_balance)
           .div(bitcoinExp)

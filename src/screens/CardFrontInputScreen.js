@@ -88,6 +88,7 @@ class CardFrontInputScreen extends Component {
 
   componentDidMount() {
     NfcManager.isSupported().then(supported => {
+      console.log("NfcManager.isSupported", supported)
       if (supported) {
         this.startNfc();
       }
@@ -109,19 +110,29 @@ class CardFrontInputScreen extends Component {
 
   onTagDiscovered = tag => {
     const { updatePublicKey } = this.props;
-
+    console.log("onTagDiscovered", tag)
     try {
       if (Ndef.isType(tag.ndefMessage[0], Ndef.TNF_WELL_KNOWN, Ndef.RTD_TEXT)) {
         const text = Ndef.text.decodePayload(tag.ndefMessage[0].payload);
         const publicKey = parseScannedCode(text);
         updatePublicKey(publicKey);
       }
+      console.log("is type uri", Ndef.isType(tag.ndefMessage[0], Ndef.TNF_WELL_KNOWN, Ndef.RTD_URI))
+      if (Ndef.isType(tag.ndefMessage[0], Ndef.TNF_WELL_KNOWN, Ndef.RTD_URI)) {
+        console.log(tag.ndefMessage[0].payload)
+        const uri = Ndef.uri.decodePayload(tag.ndefMessage[0].payload);
+        console.log(uri)
+        const publicKey = parseScannedCode(uri);
+        updatePublicKey(publicKey);
+      }
+      
     } catch (e) {
       // console.log(e);
     }
   };
 
   startDetection = () => {
+    console.log("startDetection")
     NfcManager.registerTagEvent(
       this.onTagDiscovered,
       "Hold your device over the SOLO card",
@@ -130,15 +141,18 @@ class CardFrontInputScreen extends Component {
   };
 
   stopDetection = () => {
+    console.log("stopDetection")
     NfcManager.unregisterTagEvent();
   };
 
   startNfc() {
     NfcManager.start()
       .then(() => {
+        console.log("Platform.OS", Platform.OS )
         if (Platform.OS === "android") {
           NfcManager.isEnabled().then(enabled => {
             if (enabled) this.startDetection();
+            console.log("NfcManager.isEnabled", enabled)
           });
 
           NfcManager.onStateChanged(event => {

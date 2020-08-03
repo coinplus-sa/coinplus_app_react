@@ -104,6 +104,15 @@ generateTest(
 generateTest(
   "BNH9SkRaGhP6dxuccW9ir6WGafKjL9",
   "SY5xX71BApU4xuxYcZ38AbJgqgV4DA",
+  "L5RAWzLKhL9d6fvYGTB2DquezDQgMSAF52EK8p2QqFWBMvSUqkiL",
+  "1DTfQqm7cijSyGkx29vco13i38TkR6iUN5"
+);
+
+/*
+testnet
+generateTest(
+  "BNH9SkRaGhP6dxuccW9ir6WGafKjL9",
+  "SY5xX71BApU4xuxYcZ38AbJgqgV4DA",
   "cVn9yuLB8PqtG7Poerz9bAQicSi61tFw94NnFEUvLNABcfXskss6",
   "msychtr6RkAhkPEZjitzcvG2u84TLL9vXk"
 );
@@ -113,3 +122,4 @@ generateTest(
   "cPC6wZSgCWFQf7UmtsiFyHsYTj2TNDMSG5zYsw9UtZ3XuqdeNDCZ",
   "mrzH3vuUspsAYAc8gFvaPddmcGmZKtRYQQ"
 );
+*/

@@ -9,6 +9,7 @@ run apt-get install nodejs -y
 run apt-get install zip unzip -y
 run apt-get install python make  -y
 run apt-get install build-essential -y
+run apt-get install git -y
 
 workdir /
 run curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
@@ -23,10 +24,14 @@ run apt-get install expect -y
 run expect -c 'spawn /android-studio/tools/bin/sdkmanager "platform-tools" "platforms;android-28"; sleep 5; expect -re "Accept(.)*: "; send "y\r\n"; expect EOF'
 
 copy apk.private.key.keystore /apk.private.key.keystore
-copy . /coinplus_app_react
 workdir /coinplus_app_react
+copy ./package.json .
+copy ./package-lock.json .
 run . /root/.nvm/nvm.sh && npm install
-run . /root/.nvm/nvm.sh && node node_modules/rn-nodeify/cmd.js  --install assert,buffer,crypto,events,process,stream,vm --hack
+run . /root/.nvm/nvm.sh && npm install bitbox-sdk
+
+run . /root/.nvm/nvm.sh && npm run postinstall
+copy . /coinplus_app_react
 run true
 workdir /coinplus_app_react/android
 #run . /root/.nvm/nvm.sh && export ANDROID_HOME=/android-studio/  && ./gradlew  assembleRelease

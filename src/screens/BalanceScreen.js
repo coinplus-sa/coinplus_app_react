@@ -99,21 +99,21 @@ class BalanceScreen extends Component {
     const { providedPublicKey, currency } = this.props;
     const { balanceAmount, balanceAmountUnconfirmed, step } = this.state;
 
-    let historyURL;
+    let screenHistoryURL;
     if (currency === "btc") {
-      historyURL = Bitcoin.historyURL + providedPublicKey;
+      screenHistoryURL = Bitcoin.historyURL + providedPublicKey;
     }
     if (currency === "ltc") {
-      historyURL = Litecoin.historyURL + providedPublicKey;
+      screenHistoryURL = Litecoin.historyURL + providedPublicKey;
     }
     if (currency === "bch") {
-      historyURL = BitcoinCash.historyURL + providedPublicKey;
+      screenHistoryURL = BitcoinCash.historyURL + providedPublicKey;
     }
     if (currency === "xtz") {
-      historyURL = Tezos.historyURL + providedPublicKey;
+      screenHistoryURL = Tezos.historyURL + providedPublicKey;
     }
     if (currency === "eth") {
-      historyURL = Ethereum.historyURL + providedPublicKey;
+      screenHistoryURL = Ethereum.historyURL + providedPublicKey;
     }
 
     return (
@@ -143,7 +143,7 @@ class BalanceScreen extends Component {
               <H3 style={[styles.title]}>History</H3>
               <Text
                 style={[styles.currencyView, { color: "blue" }]}
-                onPress={() => Linking.openURL(historyURL)}
+                onPress={() => Linking.openURL(screenHistoryURL)}
               >
                 Check History
               </Text>

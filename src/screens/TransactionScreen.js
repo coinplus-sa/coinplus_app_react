@@ -19,17 +19,21 @@ import { connect } from "react-redux";
 import { Decimal } from "decimal.js";
 import Bitcoin from "../util/bitcoin";
 import BitcoinTrans from "../util/bitcoin_trans";
+import BitcoinCashTrans from "../util/bitcoincash_trans";
+
+import EthereumTrans from "../util/ethereum_trans";
 
 import BitcoinCash from "../util/bitcoincash";
 import Litecoin from "../util/litecoin";
 import Tezos from "../util/tezos";
+import TezosTrans from "../util/tezos_trans"
 import Ethereum from "../util/ethereum";
+
 import { isValidAddress } from "../util/generic";
 import {
   updateCurrencyAction,
   updateDestinationAddressAction,
   updateComputedPrivateKeyAction,
-  updatePublicKeyAction,
   updateSendAmountAction,
   updateFeeAction,
 } from "../redux/reducers/inputs";
@@ -77,18 +81,55 @@ class TransactionScreen extends Component {
     this.refreshBalance = this.refreshBalance.bind(this);
     this.updateFeeAndAmount = this.updateFeeAndAmount.bind(this);
     this.updateSendAmountAndUnlock = this.updateSendAmountAndUnlock.bind(this);
+    this.updateDestinationAddressAndFee = this.updateDestinationAddressAndFee.bind(this);
   }
 
-  componentDidMount() {
-    this.resetFees();
+  async componentDidMount() {
+    await this.resetFees();
     this.refreshBalance();
   }
 
-  resetFees() {
-    const { currency, publicKey } = this.props;
-
-    if (currency === "btc") {
-      BitcoinTrans.getFees(publicKey)
+  async resetFees(destinationAddress) {
+    const { currency, publicKey, computedPrivateKey } = this.props;
+  
+    if (currency === "btc" || currency === "ltc" ) {
+      console.log(publicKey, currency)
+      BitcoinTrans.getFees(publicKey, currency)
+        .then(res => {
+          console.log("new fee", res);
+          this.updateFeeAndAmount(Decimal(res).toString());
+        })
+        .catch(err => {
+          alert(err);
+        });
+    }
+    if (currency === "bch" ) {
+      console.log(publicKey, currency)
+      BitcoinCashTrans.getFees("0", publicKey, publicKey, computedPrivateKey)
+        .then(res => {
+          console.log("new fee", res);
+          this.updateFeeAndAmount(Decimal(res).toString());
+        })
+        .catch(err => {
+          alert(err);
+        });
+    }
+    if (currency === "xtz" ) {
+      console.log(publicKey, currency)
+      try{
+      console.log("destinationAddress", destinationAddress)
+      let res = await TezosTrans.getFees(destinationAddress)
+      console.log("new fee", res);
+      this.updateFeeAndAmount(Decimal(res).toString());
+      }
+        
+      catch(err ){
+          alert(err);
+        };
+    }
+    if (currency === "eth" ) {
+      console.log(publicKey, currency)
+      EthereumTrans.getFees(publicKey, currency)
         .then(res => {
           console.log("new fee", res);
           this.updateFeeAndAmount(Decimal(res).toString());
@@ -157,7 +198,9 @@ class TransactionScreen extends Component {
           .sub(Decimal(fee))
           .toString()
       );
-    } catch {}
+    } catch {
+      // keep the value entered by the user
+    }
   }
 
   fullAmountState() {
@@ -186,10 +229,21 @@ class TransactionScreen extends Component {
           );
         }
       } catch {
-        false;
+        // keep the value entered by the user
       }
     }
     this.setState({});
+  }
+  updateDestinationAddressAndFee(addr){
+    const {
+      updateDestinationAddress,
+      currency
+    } = this.props;
+    console.log("updateDestinationAddressAndFee", addr, currency)
+    updateDestinationAddress(addr)
+    if (currency === "xtz"){
+      this.resetFees(addr)
+    }
   }
 
   updateSendAmountAndUnlock(value) {
@@ -206,7 +260,6 @@ class TransactionScreen extends Component {
       navigation,
       currency,
       destinationAddress,
-      updateDestinationAddress,
       publicKey,
       sendAmount,
       fee,
@@ -216,7 +269,7 @@ class TransactionScreen extends Component {
       balanceAmount,
       balanceAmountUnconfirmed,
       step,
-      fullAmountLock,
+      fullAmountLock
     } = this.state;
     let isValid = true;
     if (!isValidAddress(publicKey, currency)) {
@@ -268,7 +321,7 @@ class TransactionScreen extends Component {
           <Item regular success={isValid} style={[styles.item]}>
             <Input
               placeholder="Address"
-              onChangeText={updateDestinationAddress}
+              onChangeText={this.updateDestinationAddressAndFee}
               autoCapitalize="none"
               autoCorrect={false}
               value={destinationAddress}
@@ -279,7 +332,7 @@ class TransactionScreen extends Component {
               name="md-qr-scanner"
               onPress={() => {
                 Keyboard.dismiss();
-                navigation.navigate("QRScan", { qrtype: "destination" });
+                navigation.navigate("QRScan", { qrtype: "destination" , callback: this.updateDestinationAddressAndFee});
               }}
             />
           </Item>
@@ -359,11 +412,8 @@ export default connect(
     sendAmount: state.inputs.sendAmount,
   }),
   dispatch => ({
-    updateDestinationAddress: currency => {
-      dispatch(updateDestinationAddressAction(currency));
-    },
-    updatePublicKey: key => {
-      dispatch(updatePublicKeyAction(key));
+    updateDestinationAddress: addr => {
+      dispatch(updateDestinationAddressAction(addr));
     },
     updateCurrency: currency => {
       dispatch(updateCurrencyAction(currency));

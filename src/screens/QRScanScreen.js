@@ -32,7 +32,7 @@ class QRScanScreen extends Component {
       updatePublicKey,
       updateDestinationAddress,
     } = this.props;
-    const { qrtype } = navigation.state.params;
+    const { qrtype, callback } = navigation.state.params;
     try {
       const publicKey = parseScannedCode(e.data);
       if (qrtype === "card") {
@@ -40,7 +40,10 @@ class QRScanScreen extends Component {
       } else if (qrtype === "destination") {
         updateDestinationAddress(publicKey);
       }
-    } finally {
+      if (typeof(callback) !== "undefined"){
+        callback(publicKey)
+      }
+     } finally {
       navigation.goBack();
     }
   }

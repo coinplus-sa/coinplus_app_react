@@ -118,7 +118,7 @@ class PrivateKeyScreen extends Component {
   computePrivateKey() {
     const { step } = this.state;
     if (step === "processed") return;
-    console.log("start")
+    console.log("start");
     InteractionManager.runAfterInteractions(async () => {
       const {
         providedKey1,
@@ -162,8 +162,8 @@ class PrivateKeyScreen extends Component {
         let wif = "";
         wif = await Bitcoin.getWifBTC(secret1, secret2);
         const computedPublicKey = Bitcoin.getPublicKeyFromWif(wif);
-        console.log("wif", wif)
-    
+        console.log("wif", wif);
+
         if (providedPublicKey !== computedPublicKey) {
           this.setState({ step: "mismatch" });
         } else {
@@ -249,7 +249,12 @@ class PrivateKeyScreen extends Component {
   }
 
   render() {
-    const { providedPublicKey, navigation, computedPrivateKey } = this.props;
+    const {
+      providedPublicKey,
+      navigation,
+      computedPrivateKey,
+      currency,
+    } = this.props;
     const { step } = this.state;
 
     return (
@@ -371,7 +376,7 @@ class PrivateKeyScreen extends Component {
             </View>
           </Content>
         )}
-        {step === "processed" && currency === "btc" && (
+        {step === "processed" && (
           <Footer style={styles.transparentBackground}>
             <FooterTab>
               <Button

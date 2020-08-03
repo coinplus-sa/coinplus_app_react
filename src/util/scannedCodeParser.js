@@ -22,5 +22,5 @@ export default payload => {
   const splittedLastSegment = lastSegment.split("?");
   const address = splittedLastSegment[0];
 
-  return address;
+  return address.trim();
 };

@@ -1,6 +1,9 @@
 import util from "ethereumjs-util";
 import { Buffer } from "safe-buffer";
 import computePrivateKeySec256k1 from "./computePrivateKeySec256k1";
+import Decimal from "decimal.js";
+
+const ethereumExp = Decimal(10 ** 18);
 
 const getPrivateKey = async (secret1B58, secret2B58) => {
   const privkeyb256 = await computePrivateKeySec256k1(secret1B58, secret2B58);
@@ -23,21 +26,24 @@ const isPublicAddressDerivedFromPrivateKey = (publicAddress, privateKey) => {
 };
 
 const isValidPublicAddress = address => util.isValidChecksumAddress(address);
-export const historyURL = "https://live.blockcypher.com/eth/address/";
+const historyURL = "https://live.blockcypher.com/eth/address/";
 
 const getBalance = address => {
   return fetch(
     `https://api.blockcypher.com/v1/eth/main/addrs/${address}/balance`
   )
-    .then(function(response) {
-      console.log(response);
+    .then(response => {
       return response.json();
     })
-    .then(function(result) {
-      console.log(result);
+    .then(result => {
+      console.log(result)
       return {
-        finalBalance: result.final_balance * 0.000000000000000001,
-        unconfirmedBalance: result.unconfirmed_balance * 0.000000000000000001,
+        finalBalance: Decimal(result.final_balance)
+        .div(ethereumExp)
+        .toString(),
+        unconfirmedBalance: Decimal(result.unconfirmed_balance)
+        .div(ethereumExp)
+        .toString(),
       };
     });
 };
@@ -49,4 +55,5 @@ export default {
   isValidPublicAddress,
   isPublicAddressDerivedFromPrivateKey,
   historyURL,
+  ethereumExp
 };
