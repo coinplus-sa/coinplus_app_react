@@ -119,7 +119,6 @@ export function updateDestinationAddressAction(destinationAddress) {
 }
 
 export function updateFeeAction(fee) {
-  console.log(`updateFeeAction ${fee}`);
   return {
     type: UPDATE_FEE,
     fee,

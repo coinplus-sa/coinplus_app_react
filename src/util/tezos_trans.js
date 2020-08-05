@@ -14,15 +14,17 @@ import Tezos from "../util/tezos";
 import blake2 from "blakejs";
 import { get } from "lodash";
 let API_XTZ_TXS = "https://tezos-rpc.nodes.polychainlabs.com:443";
+
+const VERBOSE = false
+
 async function setApiXTZ(){
   res = await fetch("https://tezos-rpc.nodes.polychainlabs.com/chains/main/blocks/head/protocols",{})
   if (res.status != 200)
     API_XTZ_TXS = "https://mainnet.smartpy.io"
-  console.log(API_XTZ_TXS)
+  VERBOSE && console.log(API_XTZ_TXS)
 }
 setApiXTZ()
   
-const VERBOSE = false
 
 let elliptic = require('elliptic');
 let ec = new elliptic.ec('secp256k1');

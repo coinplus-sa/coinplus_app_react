@@ -93,10 +93,8 @@ class TransactionScreen extends Component {
     const { currency, publicKey, computedPrivateKey } = this.props;
   
     if (currency === "btc" || currency === "ltc" ) {
-      console.log(publicKey, currency)
       BitcoinTrans.getFees(publicKey, currency)
         .then(res => {
-          console.log("new fee", res);
           this.updateFeeAndAmount(Decimal(res).toString());
         })
         .catch(err => {
@@ -104,10 +102,8 @@ class TransactionScreen extends Component {
         });
     }
     if (currency === "bch" ) {
-      console.log(publicKey, currency)
       BitcoinCashTrans.getFees("0", publicKey, publicKey, computedPrivateKey)
         .then(res => {
-          console.log("new fee", res);
           this.updateFeeAndAmount(Decimal(res).toString());
         })
         .catch(err => {
@@ -115,11 +111,8 @@ class TransactionScreen extends Component {
         });
     }
     if (currency === "xtz" ) {
-      console.log(publicKey, currency)
       try{
-      console.log("destinationAddress", destinationAddress)
       let res = await TezosTrans.getFees(destinationAddress)
-      console.log("new fee", res);
       this.updateFeeAndAmount(Decimal(res).toString());
       }
         
@@ -128,10 +121,8 @@ class TransactionScreen extends Component {
         };
     }
     if (currency === "eth" ) {
-      console.log(publicKey, currency)
       EthereumTrans.getFees(publicKey, currency)
         .then(res => {
-          console.log("new fee", res);
           this.updateFeeAndAmount(Decimal(res).toString());
         })
         .catch(err => {
@@ -239,7 +230,6 @@ class TransactionScreen extends Component {
       updateDestinationAddress,
       currency
     } = this.props;
-    console.log("updateDestinationAddressAndFee", addr, currency)
     updateDestinationAddress(addr)
     if (currency === "xtz"){
       this.resetFees(addr)

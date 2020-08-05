@@ -79,10 +79,15 @@ const constructTransaction = async (amount, to, from, wif, fee) =>
 }
 
 const sendBitcoinCash = (amount, to, from, wif, fee) => {
+  let addressWithPrefix;
   //https://gist.github.com/alwaysAn0n/953d4a20030eb57645b65af48d63df18
-
-
-  return constructTransaction(amount, to, from, wif, fee).then(tx=>
+  if (to.split(":").length == 1){
+    addressWithPrefix = "bitcoincash:"+to
+  }
+  else{
+    addressWithPrefix = to
+  }
+  return constructTransaction(amount, addressWithPrefix, from, wif, fee).then(tx=>
     {
       return bitbox.RawTransactions.sendRawTransaction(tx.toHex())
     })

@@ -51,14 +51,6 @@ class TransactionResultScreen extends Component {
       computedPrivateKey,
       fee,
     } = this.props;
-    console.log(
-      currency,
-      destinationAddress,
-      publicKey,
-      sendAmount,
-      computedPrivateKey,
-      fee
-    );
 
     if (currency === "btc" || currency === "ltc") {
       BitcoinTrans.sendBitcoin(
@@ -76,7 +68,6 @@ class TransactionResultScreen extends Component {
           });
         })
         .catch(error => {
-          console.log("error");
           console.log(`error ${error}`);
           this.setState({
             errormsg: "" + error,
@@ -100,7 +91,6 @@ class TransactionResultScreen extends Component {
           });
         })
         .catch(error => {
-          console.log("error");
           console.log("error",error);
           this.setState({
             errormsg: "" + error,
@@ -109,7 +99,6 @@ class TransactionResultScreen extends Component {
         });
     }
     if (currency === "xtz") {
-      console.log("toto")
       try{
         let tx = await TezosTrans.sendTezos(
           sendAmount,
@@ -125,7 +114,6 @@ class TransactionResultScreen extends Component {
           });
         }
       catch (error){
-          console.log("error");
           console.log(`error ${error}`);
           this.setState({
             errormsg: "" + error,
@@ -149,7 +137,6 @@ class TransactionResultScreen extends Component {
           });
         })
         .catch(error => {
-          console.log("error");
           console.log(`error ${error}`);
           this.setState({
             errormsg: "" + error,

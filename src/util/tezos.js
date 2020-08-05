@@ -70,7 +70,6 @@ const getBalance = address => {
       return response.json();
     })
     .then(result => {
-      console.log(result)
       if (result.type === "empty"){
         return { finalBalance: "0", unconfirmedBalance: "0" };
       }

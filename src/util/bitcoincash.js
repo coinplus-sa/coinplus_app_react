@@ -17,10 +17,20 @@ const getPublicKeyFromWif = wif => {
 };
 
 const isValidPublicAddress = address => {
+  let addressWithPrefix ;
   if (!address) return false;
 
   try {
-    return bchaddr.isValidAddress(address);
+    if (address.split(":").length == 1){
+      addressWithPrefix =  "bitcoincash:"+address
+    }
+    else{
+      if (address.split(":")[0] != "bitcoincash"){
+        return false
+      }
+      addressWithPrefix = address
+    }
+    return bchaddr.isValidAddress(addressWithPrefix);
   } catch (e) {
     return false;
   }
@@ -29,10 +39,6 @@ const isValidPublicAddress = address => {
 const getBalance = address => {
   return bitbox.Address.details(address)
     .then(balance => {
-      console.log({
-        finalBalance: balance.balance,
-        unconfirmedBalance: balance.unconfirmedBalance,
-        })
       return {
         finalBalance: balance.balance,
         unconfirmedBalance: balance.unconfirmedBalance,

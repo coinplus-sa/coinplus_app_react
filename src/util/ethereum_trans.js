@@ -5,6 +5,8 @@ const web3 = new Web3(new Web3.providers.HttpProvider(`https://mainnet.infura.io
 const API_ETH_TXS_CREATE = "https://api.blockcypher.com/v1/eth/main/txs/new";
 const API_ETH_TXS_SEND = "https://api.blockcypher.com/v1/eth/main/txs/send";
 
+const VERBOSE = false;
+
 const estimateGasSimpleTransfer = (from)=>{
   let gasPrice;
   let chainId;
@@ -12,7 +14,7 @@ const estimateGasSimpleTransfer = (from)=>{
   return web3.eth.getGasPrice().then(gp =>
     {
       gasPrice = gp;
-      console.log(gasPrice);
+      VERBOSE &&  console.log(gasPrice);
       return web3.eth.net.getId()
   }).then(chainIdres=>{
     chainId = chainIdres;
@@ -28,10 +30,7 @@ const estimateGasSimpleTransfer = (from)=>{
     "gas": "21000",
     "count":Decimal(transactionCount).add(Decimal("1")).toString()
   };
-  console.log(rawTransaction)
-//  return web3.eth.accounts.signTransaction(rawTransaction, privateKey)})
- // .then(signedTransation =>{
-  //  console.log(signedTransation)
+    VERBOSE && console.log(rawTransaction)
     return  web3.eth.estimateGas(rawTransaction);
   }).then(eg=> {
     return  {estimatedGas:eg ,
@@ -45,11 +44,8 @@ const getFees = (from, privateKey) => {
   let gasPrice;
   return estimateGasSimpleTransfer(from).then(({estimatedGas, gasPrice }) =>
     {
-      console.log("estimatedGas")
-      console.log(estimatedGas)
-      console.log("gasPrice")
-      console.log(gasPrice)
-      console.log(gasPrice*estimatedGas)
+      VERBOSE && console.log("estimatedGas", estimatedGas)
+      VERBOSE && console.log("gasPrice", gasPrice)
       return Decimal(gasPrice*estimatedGas).div(Ethereum.ethereumExp).toString()
     }
   )
@@ -73,10 +69,10 @@ const sendEther = (amount, to, from, privateKey, fee) => {
     "gas": estimatedGas,
     "count":Decimal(transactionCount).add(Decimal("1")).toString()
   };
-  console.log(rawTransaction)
+  VERBOSE && console.log(rawTransaction)
   return web3.eth.accounts.signTransaction(rawTransaction, privateKey)})
   .then(signedTransation =>{
-    console.log(signedTransation)
+    VERBOSE && console.log(signedTransation)
     return web3.eth.sendSignedTransaction(signedTransation.rawTransaction)
   }).then(transactionData => {
     return transactionData.transactionHash

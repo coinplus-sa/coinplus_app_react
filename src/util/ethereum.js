@@ -36,7 +36,6 @@ const getBalance = address => {
       return response.json();
     })
     .then(result => {
-      console.log(result)
       return {
         finalBalance: Decimal(result.final_balance)
         .div(ethereumExp)

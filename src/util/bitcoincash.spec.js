@@ -68,3 +68,18 @@ generateTest(
   "L41oJHBFdeGEu9jF1g7yxEn5iYFo3GSxU5cFwNPM8xerRZ6qaCQn",
   "bitcoincash:qzw8vcapp7re9th2z8kv00q8vcx8lya3q5r2mealmd"
 );
+
+
+
+[
+  {address: "bitcoincash:qzw8vcapp7re9th2z8kv00q8vcx8lya3q5r2mealmd", valid:true},
+  {address: "qzw8vcapp7re9th2z8kv00q8vcx8lya3q5r2mealmd", valid:true},
+  {address: "bchtest:qzw8vcapp7re9th2z8kv00q8vcx8lya3q5r2mealmd", valid:false},
+].map(({ address, valid }) =>
+  test(`Expect '${address}' to be ${
+    valid ? "a valid" : "an invalid"
+  } address`, () => {
+    expect(BitcoinCash.isValidPublicAddress(address)).toBe(valid);
+  })
+);
+

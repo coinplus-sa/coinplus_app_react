@@ -62,7 +62,6 @@ const getFees = (from, cur) => {
     })
     .then(restext => {
       let res;
-      console.log(restext);
       try {
         res = JSON.parse(restext);
       } catch {
@@ -119,7 +118,6 @@ const sendBitcoin = (amount, to, from, wif, fee, cur) => {
     })
     .then(res => {
       let tmptx;
-      console.log(res);
       try {
         tmptx = JSON.parse(res);
       } catch {
@@ -156,11 +154,9 @@ const sendBitcoin = (amount, to, from, wif, fee, cur) => {
     })
     .then(res => {
       let finaltx;
-      console.log(res);
 
       try {
         finaltx = JSON.parse(res);
-        console.log(res);
       } catch {
         throw new Error(`malformed json answer from the server:${res}`);
       }

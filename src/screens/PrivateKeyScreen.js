@@ -118,7 +118,6 @@ class PrivateKeyScreen extends Component {
   computePrivateKey() {
     const { step } = this.state;
     if (step === "processed") return;
-    console.log("start");
     InteractionManager.runAfterInteractions(async () => {
       const {
         providedKey1,
@@ -162,7 +161,6 @@ class PrivateKeyScreen extends Component {
         let wif = "";
         wif = await Bitcoin.getWifBTC(secret1, secret2);
         const computedPublicKey = Bitcoin.getPublicKeyFromWif(wif);
-        console.log("wif", wif);
 
         if (providedPublicKey !== computedPublicKey) {
           this.setState({ step: "mismatch" });
@@ -179,12 +177,12 @@ class PrivateKeyScreen extends Component {
         const computedPublicKey = BitcoinCash.getPublicKeyFromWif(wif);
         let providedPublicKeyWithoutColon;
         let computedPublicKeyWithoutColon;
-        if (providedPublicKey.split(":") > 1) {
+        if (providedPublicKey.split(":").length > 1) {
           [, providedPublicKeyWithoutColon] = providedPublicKey.split(":");
         } else {
           providedPublicKeyWithoutColon = providedPublicKey;
         }
-        if (computedPublicKey.split(":") > 1) {
+        if (computedPublicKey.split(":").length > 1) {
           [, computedPublicKeyWithoutColon] = computedPublicKey.split(":");
         } else {
           computedPublicKeyWithoutColon = computedPublicKey;
@@ -243,7 +241,6 @@ class PrivateKeyScreen extends Component {
           });
         }
       }
-      console.log("computePrivateKey ", computedPrivateKey);
       updateComputedPrivateKey(computedPrivateKey);
     });
   }
