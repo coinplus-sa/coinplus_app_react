@@ -22,9 +22,9 @@ const getWif = async (secret1B58, secret2B58) => {
   let finalPrivkeyB256;
   Object.keys(formats).forEach(format => {
     if (formats[format].compressed) {
-      toDigest = [...formats[format].first, ...privkeyB256.toArray(256), 1];
+      toDigest = [...formats[format].first, ...privkeyB256.toArray("be", 32), 1];
     } else {
-      toDigest = [...formats[format].first, ...privkeyB256.toArray(256)];
+      toDigest = [...formats[format].first, ...privkeyB256.toArray("be", 32)];
     }
     doublesha256 = sha256.digest(sha256.digest(toDigest));
     finalPrivkeyB256 = [...toDigest, ...doublesha256.slice(0, 4)];

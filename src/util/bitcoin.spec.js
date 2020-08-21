@@ -68,11 +68,21 @@ const generateTest = (key1, key2, expectedWif, expectedPublicKey) => {
     expect.assertions(2);
     const wif = await Bitcoin.getWifBTC(key1, key2);
     const publicKey = Bitcoin.getPublicKeyFromWif(wif);
-
+    console.log(wif, expectedWif)
+    console.log(publicKey, expectedPublicKey)
     expect(wif).toEqual(expectedWif);
     expect(publicKey).toEqual(expectedPublicKey);
   });
 };
+
+generateTest(
+  "GQ1CoufbtoCqGbbbjqMBhsnxbWt32c",
+  "d9aY9CiNVTYJqh82V5PYCMBUMerJp8",
+  "KwFEgbEF5sfTyaA9LPBBcBvdWSUTQY33YekKSzNcTLBaUGCSi8af",
+  "1LbziiAoSxoRszym17JCYDQaqqmUmNUCY8"
+);
+
+
 
 generateTest(
   "qxknCqsD18GLvkV8FNrabuFicmbz",
