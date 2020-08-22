@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.2.0</string>
+	<string>1.2.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>30</string>
+	<string>32</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NFCReaderUsageDescription</key>
@@ -39,6 +39,8 @@
 	</dict>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>This app does not use the Media Library</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app does not use the Bluetooth</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>This app does not use the Bluetooth</string>
 	<key>NSCalendarsUsageDescription</key>
@@ -46,7 +48,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Access to the camera is needed in order to scan QR codes</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>This app does not use the location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app does not use the microphone</string>
 	<key>NSMotionUsageDescription</key>
@@ -74,6 +76,8 @@
 		<string>FontAwesome5_Regular.ttf</string>
 		<string>FontAwesome5_Solid.ttf</string>
 	</array>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app does not use the location</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
