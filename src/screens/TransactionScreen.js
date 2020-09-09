@@ -262,9 +262,6 @@ class TransactionScreen extends Component {
       fullAmountLock
     } = this.state;
     let isValid = true;
-    if (!isValidAddress(publicKey, currency)) {
-      isValid = false;
-    }
     try {
       isValid =
         Decimal(balanceAmount)
@@ -273,6 +270,9 @@ class TransactionScreen extends Component {
       isValid = isValid && Decimal(sendAmount) > 0;
       isValid = isValid && Decimal(fee) >= 0;
     } catch {
+      isValid = false;
+    }
+    if (!isValidAddress(publicKey, currency)) {
       isValid = false;
     }
 
