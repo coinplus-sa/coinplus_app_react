@@ -84,8 +84,8 @@ class TransactionScreen extends Component {
     this.updateDestinationAddressAndFee = this.updateDestinationAddressAndFee.bind(this);
   }
 
-  async componentDidMount() {
-    await this.resetFees();
+  componentDidMount() {
+    this.resetFees();
     this.refreshBalance();
   }
 
@@ -326,7 +326,7 @@ class TransactionScreen extends Component {
               name="md-qr-scanner"
               onPress={() => {
                 Keyboard.dismiss();
-                navigation.navigate("QRScan", { qrtype: "destination" , callback: this.updateDestinationAddressAndFee});
+                navigation.navigate("QRScan", { qrtype: "destination" , callback:this.updateDestinationAddressAndFee});
               }}
             />
           </Item>
