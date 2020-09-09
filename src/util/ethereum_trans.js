@@ -7,7 +7,7 @@ const API_ETH_TXS_SEND = "https://api.blockcypher.com/v1/eth/main/txs/send";
 
 const VERBOSE = false;
 
-const estimateGasSimpleTransfer = (from)=>{
+const estimateGasSimpleTransfer = (from, to)=>{
   let gasPrice;
   let chainId;
   let transactionCount;
@@ -23,11 +23,11 @@ const estimateGasSimpleTransfer = (from)=>{
       transactionCount = count;
   let rawTransaction = {
     "from": from,
-    "to": from,
+    "to": to,
     "value": "0",
     "gasPrice": gasPrice,
     "chainId": chainId.toString(),
-    "gas": "21000",
+    "gas": "100000",
     "count":Decimal(transactionCount).add(Decimal("1")).toString()
   };
     VERBOSE && console.log(rawTransaction)
@@ -40,9 +40,13 @@ const estimateGasSimpleTransfer = (from)=>{
 
 }
 
-const getFees = (from, privateKey) => {
+const getFees = (from, to) => {
   let gasPrice;
-  return estimateGasSimpleTransfer(from).then(({estimatedGas, gasPrice }) =>
+  let dest = from;
+  if (typeof(to) !== "undefined"){
+    dest = to
+  }
+  return estimateGasSimpleTransfer(from, dest).then(({estimatedGas, gasPrice }) =>
     {
       VERBOSE && console.log("estimatedGas", estimatedGas)
       VERBOSE && console.log("gasPrice", gasPrice)
@@ -57,7 +61,7 @@ const sendEther = (amount, to, from, privateKey, fee) => {
   let chainId;
   let estimatedGas;
   let gasPrice;
-  return estimateGasSimpleTransfer(from).then(({estimatedGas, gasPrice, chainId, transactionCount }) =>
+  return estimateGasSimpleTransfer(from, to).then(({estimatedGas, gasPrice, chainId, transactionCount }) =>
   {
     let gasPriceEntrered = web3.utils.toHex(Decimal(fee).mul(Ethereum.ethereumExp).div(Decimal(estimatedGas)).floor().toString())
   let rawTransaction = {
