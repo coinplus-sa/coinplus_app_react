@@ -41,6 +41,7 @@ jest.mock("react-native-scrypt", () => ({
   "44ca80876859458BBc074E68461b7203C995cF8523",
   "ethereum:0x8fbca7EF9d5A6fd5Eabc11c6041888F639274E65",
   "",
+  undefined,
   false,
 ].map(publicAddress =>
   test(`Expect ${publicAddress} to not be a valid public address`, () => {

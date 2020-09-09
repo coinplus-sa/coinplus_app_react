@@ -121,7 +121,7 @@ class TransactionScreen extends Component {
         };
     }
     if (currency === "eth" ) {
-      EthereumTrans.getFees(publicKey, currency)
+      EthereumTrans.getFees(publicKey, destinationAddress)
         .then(res => {
           this.updateFeeAndAmount(Decimal(res).toString());
         })
@@ -228,12 +228,13 @@ class TransactionScreen extends Component {
   updateDestinationAddressAndFee(addr){
     const {
       updateDestinationAddress,
+      publicKey,
       currency
     } = this.props;
     updateDestinationAddress(addr)
-    if (currency === "xtz"){
+    if (currency === "xtz" || currency === "eth"){
       this.resetFees(addr)
-    }
+    }    
   }
 
   updateSendAmountAndUnlock(value) {
@@ -273,6 +274,9 @@ class TransactionScreen extends Component {
       isValid = false;
     }
     if (!isValidAddress(publicKey, currency)) {
+      isValid = false;
+    }
+    if (!isValidAddress(destinationAddress, currency)) {
       isValid = false;
     }
 
@@ -368,7 +372,7 @@ class TransactionScreen extends Component {
               active
               name="md-refresh-circle"
               onPress={() => {
-                this.resetFees();
+                this.resetFees(destinationAddress);
               }}
             />
           </Item>

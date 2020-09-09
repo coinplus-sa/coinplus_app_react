@@ -43,7 +43,7 @@ const estimateGasSimpleTransfer = (from, to)=>{
 const getFees = (from, to) => {
   let gasPrice;
   let dest = from;
-  if (typeof(to) !== "undefined"){
+  if (Ethereum.isValidAddress(to)){
     dest = to
   }
   return estimateGasSimpleTransfer(from, dest).then(({estimatedGas, gasPrice }) =>
