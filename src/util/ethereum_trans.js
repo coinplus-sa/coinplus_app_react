@@ -7,10 +7,14 @@ const API_ETH_TXS_SEND = "https://api.blockcypher.com/v1/eth/main/txs/send";
 
 const VERBOSE = false;
 
-const estimateGasSimpleTransfer = (from, to)=>{
+const estimateGasSimpleTransfer = (from, to, value_param)=>{
   let gasPrice;
   let chainId;
   let transactionCount;
+  let value = "1";
+  if (typeof(value) !== "undefined"){
+    value = value_param
+  }
   return web3.eth.getGasPrice().then(gp =>
     {
       gasPrice = gp;
@@ -24,7 +28,7 @@ const estimateGasSimpleTransfer = (from, to)=>{
   let rawTransaction = {
     "from": from,
     "to": to,
-    "value": "0",
+    "value": value,
     "gasPrice": gasPrice,
     "chainId": chainId.toString(),
     "gas": "100000",
@@ -33,7 +37,7 @@ const estimateGasSimpleTransfer = (from, to)=>{
     VERBOSE && console.log(rawTransaction)
     return  web3.eth.estimateGas(rawTransaction);
   }).then(eg=> {
-    return  {estimatedGas:eg ,
+    return  {estimatedGas:eg*1.1 ,
       gasPrice, chainId, transactionCount}
  
   })
