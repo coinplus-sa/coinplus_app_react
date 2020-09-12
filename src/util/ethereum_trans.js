@@ -37,7 +37,7 @@ const estimateGasSimpleTransfer = (from, to, value_param)=>{
     VERBOSE && console.log(rawTransaction)
     return  web3.eth.estimateGas(rawTransaction);
   }).then(eg=> {
-    return  {estimatedGas:eg*1.1 ,
+    return  {estimatedGas:eg*1.5 ,
       gasPrice, chainId, transactionCount}
  
   })
