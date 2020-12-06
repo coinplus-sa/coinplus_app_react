@@ -47,6 +47,10 @@ jest.mock("react-native-scrypt", () => ({
     valid: true,
   },
   {
+    address: "3DiNQPEN39dU21KAoPra2aBEHbr5Bfeic2",
+    valid: true,
+  },
+  {
     address: "1JWhCù%¨`$25CxDpThSqSbiaxZcCuSD3W1",
     valid: false,
   },

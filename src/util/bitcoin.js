@@ -56,7 +56,7 @@ const isValidPublicAddress = address => {
     const goodChecksum = Buffer.from(
       sha256.digest(sha256.digest(body)).slice(0, 4)
     );
-    if (decoded[0] !== 0x00) {
+    if (decoded[0] !== 0x00 && decoded[0] !== 0x05) {
       return false;
     }
     return Buffer.compare(checksum, goodChecksum) === 0;
