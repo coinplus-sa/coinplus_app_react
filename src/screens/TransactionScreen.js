@@ -283,7 +283,8 @@ class TransactionScreen extends Component {
     return (
       <Container>
         <Content padder contentContainerStyle={{ flexGrow: 1 }}>
-          <H3 style={[styles.title]}>Address</H3>
+        <H2 style={[styles.title]}>For Debug purposes only (at the user's risk)</H2>
+        <H3 style={[styles.title]}>Address</H3>
           <Text
             style={[styles.publicKey]}
             onPress={() => {

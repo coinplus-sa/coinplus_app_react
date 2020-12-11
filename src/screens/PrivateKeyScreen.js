@@ -90,7 +90,9 @@ class PrivateKeyScreen extends Component {
     this.computePrivateKey = this.computePrivateKey.bind(this);
     this.requestComputePrivateKey = this.requestComputePrivateKey.bind(this);
     this.copyToClipboard = this.copyToClipboard.bind(this);
+    this.countClicks = this.countClicks.bind(this);
     this.timer = null;
+    
   }
 
   componentWillUnmount() {
@@ -109,7 +111,18 @@ class PrivateKeyScreen extends Component {
       }
     );
   }
+  countClicks(){
+    const { clicksNumber } = this.state;
+    this.setState({
+      clicksNumber: clicksNumber+1,
+    });
+    if (clicksNumber>10){
+      this.setState({
+        step: "debug",
+      });
+    }
 
+  }
   copyToClipboard() {
     const { computedPrivateKey } = this.props;
     Clipboard.setString(computedPrivateKey);
@@ -347,6 +360,7 @@ class PrivateKeyScreen extends Component {
                   <TouchableOpacity
                     onPress={this.copyToClipboard}
                     style={styles.touchable}
+                    onClick={this.countClicks}
                   >
                     <Text
                       style={[
@@ -373,7 +387,7 @@ class PrivateKeyScreen extends Component {
             </View>
           </Content>
         )}
-        {step === "processed" && (
+        {step === "debug" && (
           <Footer style={styles.transparentBackground}>
             <FooterTab>
               <Button

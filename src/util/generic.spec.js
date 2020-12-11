@@ -1,4 +1,4 @@
-import { computeSoloPro } from "./generic";
+import { computeSoloPro, isValidAddress } from "./generic";
 
 jest.mock("react-native-scrypt", () => ({
   __esModule: true,
@@ -71,3 +71,9 @@ test("SOLO PRO 2", async () => {
   expect(secret1).toEqual(expectedSecret1);
   expect(secret2).toEqual(expectedSecret2);
 });
+test("addressValid", () => {
+    expect(isValidAddress("3PoVTfjsApfZe9zkJZQ2c4jHSDYejrMFrV","btc")).toEqual(true)
+    expect(isValidAddress("1NKVxVjZ5tKHcB6ATKW45V6MH2Khf7fGxq","btc")).toEqual(true)
+    
+    
+})
