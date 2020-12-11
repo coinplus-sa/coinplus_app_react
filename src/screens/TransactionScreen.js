@@ -6,6 +6,7 @@ import {
   Button,
   Text,
   H3,
+  H2,
   Item,
   Icon,
   Input,

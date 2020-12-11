@@ -84,13 +84,13 @@ class PrivateKeyScreen extends Component {
     super(props);
 
     this.state = {
+      clicksNumber:0,
       step: "unprocessed",
     };
 
     this.computePrivateKey = this.computePrivateKey.bind(this);
     this.requestComputePrivateKey = this.requestComputePrivateKey.bind(this);
     this.copyToClipboard = this.copyToClipboard.bind(this);
-    this.countClicks = this.countClicks.bind(this);
     this.timer = null;
     
   }
@@ -111,21 +111,20 @@ class PrivateKeyScreen extends Component {
       }
     );
   }
-  countClicks(){
+
+  copyToClipboard() {
+    const { computedPrivateKey } = this.props;
+    Clipboard.setString(computedPrivateKey);
     const { clicksNumber } = this.state;
     this.setState({
       clicksNumber: clicksNumber+1,
     });
+    console.log(clicksNumber)
     if (clicksNumber>10){
       this.setState({
         step: "debug",
       });
     }
-
-  }
-  copyToClipboard() {
-    const { computedPrivateKey } = this.props;
-    Clipboard.setString(computedPrivateKey);
   }
 
   computePrivateKey() {
@@ -360,7 +359,6 @@ class PrivateKeyScreen extends Component {
                   <TouchableOpacity
                     onPress={this.copyToClipboard}
                     style={styles.touchable}
-                    onClick={this.countClicks}
                   >
                     <Text
                       style={[
