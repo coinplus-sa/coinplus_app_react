@@ -7,7 +7,7 @@
     "jest": "jest",
     "lint": "eslint .",
     "lintfix": "eslint . --fix",
-    "postinstall": "rn-nodeify --install assert,buffer,crypto,events,process,stream,vm,https,url,os,http --hack",
+    "postinstall": "rn-nodeify --install assert,buffer,crypto,events,process,stream,vm,https,url,os,http --hack; jetify",
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "npm run lint && npm run jest"
   },
@@ -73,6 +73,7 @@
     "eslint-plugin-react-native": "3.6.0",
     "isomorphic-fetch": "^2.2.1",
     "jest": "24.1.0",
+    "jetifier": "^1.6.6",
     "metro-react-native-babel-preset": "0.51.1",
     "prettier": "1.16.4",
     "scrypt-async": "2.0.1"

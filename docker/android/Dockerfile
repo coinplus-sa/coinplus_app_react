@@ -21,7 +21,7 @@ run curl  https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip -
 run unzip tools.zip
 env ANDROID_HOME=/android-studio/ 
 run apt-get install expect -y
-run expect -c 'spawn /android-studio/tools/bin/sdkmanager "platform-tools" "platforms;android-28"; sleep 5; expect -re "Accept(.)*: "; send "y\r\n"; expect EOF'
+run expect -c 'spawn /android-studio/tools/bin/sdkmanager "platform-tools" "platforms;android-29"; sleep 5; expect -re "Accept(.)*: "; send "y\r\n"; expect EOF'
 
 copy apk.private.key.keystore /apk.private.key.keystore
 workdir /coinplus_app_react
